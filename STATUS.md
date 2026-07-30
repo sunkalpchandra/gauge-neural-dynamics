@@ -18,7 +18,7 @@ Last updated after the five-seed sweep; see `git log` for the exact commit.
 | 5. Robustness | 3 | **final** | leads at every noise level, 0.802 → 0.327 |
 | 6. Continuous context | 5 | **final** | held-out cues 0.688 ± 0.002 = trained cues |
 
-Tests: 49, all passing, warning-free. Paper body is 9 pages and compiles.
+Tests: 51, all passing, warning-free. Paper body is 9 pages and compiles.
 
 Check the current state yourself rather than trusting this table:
 
