@@ -42,7 +42,7 @@ def test_inverse_is_exact():
     for c in range(5):
         th = theta[c].expand(64, -1)
         assert torch.allclose(g.inverse(g.transform(z, th), th), z, atol=1e-4)
-    assert float(g.inverse_defect(theta)) < 1e-4
+    assert float(g.inverse_defect(theta).detach()) < 1e-4
 
 
 def test_unanchored_gauge_is_not_the_identity():
@@ -74,7 +74,7 @@ def test_so_generators_exponentiate_to_rotations():
     G = bank.generators()
     M = torch.matrix_exp(1.3 * G[0])
     assert torch.allclose(M @ M.T, torch.eye(4), atol=1e-5)
-    assert abs(float(torch.det(M)) - 1.0) < 1e-5
+    assert abs(float(torch.det(M).detach()) - 1.0) < 1e-5
 
 
 def test_generators_are_unit_norm():
