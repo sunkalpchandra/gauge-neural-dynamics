@@ -1,6 +1,6 @@
 \begin{table}[t]
 \centering
-\caption{\textbf{Ablations.} Each row removes or replaces one ingredient and is refitted from scratch on the place-cell simulation; $\Delta$ is the change in transport $R^2$ relative to the full model. Mean $\pm$ s.e.m.\ over 1 seeds. The latent-dimension sweep is shown in Fig.~\ref{fig:ablations}c.}
+\caption{\textbf{Ablations.} Each row removes or replaces one ingredient and is refitted from scratch on the place-cell simulation; $\Delta$ is the change in transport $R^2$ relative to the full model. Mean $\pm$ s.e.m.\ over 3 seeds. The latent-dimension sweep is shown in Fig.~\ref{fig:ablations}c.}
 \label{tab:ablations}
 \vspace{2pt}
 \small
@@ -8,12 +8,26 @@
 \toprule
 Configuration & Transport $R^2$ & $\Delta$ & CIS & GCS & GRE \\
 \midrule
-\textbf{full model} & 0.586\,\tiny{$\pm$\,0.000} & -- & 0.978\,\tiny{$\pm$\,0.000} & 0.890\,\tiny{$\pm$\,0.000} & 0.518\,\tiny{$\pm$\,0.000} \\
+\textbf{full model} & 0.644\,\tiny{$\pm$\,0.008} & -- & 0.989\,\tiny{$\pm$\,0.003} & 0.876\,\tiny{$\pm$\,0.005} & 0.161\,\tiny{$\pm$\,0.018} \\
 \midrule
-A1: no gauge & 0.012\,\tiny{$\pm$\,0.000} & $-0.574$ & 0.940\,\tiny{$\pm$\,0.000} & 1.000\,\tiny{$\pm$\,0.000} & 1.278\,\tiny{$\pm$\,0.000} \\
-A2: no group loss & 0.591\,\tiny{$\pm$\,0.000} & $+0.004$ & 0.978\,\tiny{$\pm$\,0.000} & 0.879\,\tiny{$\pm$\,0.000} & 0.504\,\tiny{$\pm$\,0.000} \\
-A2a: no closure only & 0.587\,\tiny{$\pm$\,0.000} & $+0.001$ & 0.978\,\tiny{$\pm$\,0.000} & 0.890\,\tiny{$\pm$\,0.000} & 0.518\,\tiny{$\pm$\,0.000} \\
-A3: no topology & 0.588\,\tiny{$\pm$\,0.000} & $+0.002$ & 0.976\,\tiny{$\pm$\,0.000} & 0.901\,\tiny{$\pm$\,0.000} & 0.536\,\tiny{$\pm$\,0.000} \\
+A1: no gauge & 0.036\,\tiny{$\pm$\,0.011} & $-0.608$ & 0.916\,\tiny{$\pm$\,0.008} & 1.000\,\tiny{$\pm$\,0.000} & 1.404\,\tiny{$\pm$\,0.035} \\
+A2: no group loss & 0.656\,\tiny{$\pm$\,0.009} & $+0.012$ & 0.992\,\tiny{$\pm$\,0.002} & 0.838\,\tiny{$\pm$\,0.015} & 0.125\,\tiny{$\pm$\,0.005} \\
+A2a: no closure only & 0.641\,\tiny{$\pm$\,0.006} & $-0.003$ & 0.988\,\tiny{$\pm$\,0.003} & 0.873\,\tiny{$\pm$\,0.004} & 0.167\,\tiny{$\pm$\,0.020} \\
+A3: no topology & 0.639\,\tiny{$\pm$\,0.004} & $-0.005$ & 0.987\,\tiny{$\pm$\,0.002} & 0.881\,\tiny{$\pm$\,0.007} & 0.171\,\tiny{$\pm$\,0.007} \\
+no transport loss & -0.169\,\tiny{$\pm$\,0.021} & $-0.813$ & 0.984\,\tiny{$\pm$\,0.002} & 0.971\,\tiny{$\pm$\,0.007} & 6.582\,\tiny{$\pm$\,2.269} \\
+no invariance loss & 0.604\,\tiny{$\pm$\,0.010} & $-0.040$ & 0.933\,\tiny{$\pm$\,0.010} & 0.883\,\tiny{$\pm$\,0.007} & 0.345\,\tiny{$\pm$\,0.066} \\
+no anchoring & 0.642\,\tiny{$\pm$\,0.009} & $-0.002$ & 0.990\,\tiny{$\pm$\,0.002} & 0.899\,\tiny{$\pm$\,0.011} & 1.073\,\tiny{$\pm$\,0.237} \\
+unpaired (MMD) & 0.625\,\tiny{$\pm$\,0.015} & $-0.019$ & 0.956\,\tiny{$\pm$\,0.010} & 0.896\,\tiny{$\pm$\,0.008} & 0.266\,\tiny{$\pm$\,0.037} \\
+gauge=flow & 0.681\,\tiny{$\pm$\,0.008} & $+0.037$ & 0.998\,\tiny{$\pm$\,0.000} & 0.849\,\tiny{$\pm$\,0.005} & 0.154\,\tiny{$\pm$\,0.022} \\
+algebra=so & 0.597\,\tiny{$\pm$\,0.017} & $-0.047$ & 0.971\,\tiny{$\pm$\,0.001} & 0.930\,\tiny{$\pm$\,0.002} & 0.247\,\tiny{$\pm$\,0.016} \\
+algebra=sl & 0.633\,\tiny{$\pm$\,0.009} & $-0.011$ & 0.987\,\tiny{$\pm$\,0.004} & 0.887\,\tiny{$\pm$\,0.012} & 0.192\,\tiny{$\pm$\,0.042} \\
+algebra=se & 0.592\,\tiny{$\pm$\,0.008} & $-0.052$ & 0.974\,\tiny{$\pm$\,0.001} & 0.924\,\tiny{$\pm$\,0.005} & 0.340\,\tiny{$\pm$\,0.066} \\
+BCH order 1 & 0.647\,\tiny{$\pm$\,0.008} & $+0.003$ & 0.990\,\tiny{$\pm$\,0.002} & 0.877\,\tiny{$\pm$\,0.002} & 0.149\,\tiny{$\pm$\,0.012} \\
+BCH order 3 & 0.644\,\tiny{$\pm$\,0.008} & $+0.000$ & 0.989\,\tiny{$\pm$\,0.003} & 0.878\,\tiny{$\pm$\,0.005} & 0.160\,\tiny{$\pm$\,0.018} \\
+encoder=VAE & 0.650\,\tiny{$\pm$\,0.005} & $+0.006$ & 0.990\,\tiny{$\pm$\,0.001} & 0.882\,\tiny{$\pm$\,0.010} & 0.170\,\tiny{$\pm$\,0.018} \\
+K=2 generators & 0.614\,\tiny{$\pm$\,0.004} & $-0.030$ & 0.980\,\tiny{$\pm$\,0.001} & 0.900\,\tiny{$\pm$\,0.006} & 0.262\,\tiny{$\pm$\,0.010} \\
+K=4 generators & 0.627\,\tiny{$\pm$\,0.003} & $-0.017$ & 0.986\,\tiny{$\pm$\,0.003} & 0.889\,\tiny{$\pm$\,0.013} & 0.214\,\tiny{$\pm$\,0.017} \\
+K=12 generators & 0.673\,\tiny{$\pm$\,0.013} & $+0.029$ & 0.994\,\tiny{$\pm$\,0.000} & 0.910\,\tiny{$\pm$\,0.003} & 0.111\,\tiny{$\pm$\,0.007} \\
 \bottomrule
 \end{tabular}
 \end{table}

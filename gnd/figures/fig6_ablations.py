@@ -74,13 +74,20 @@ def main(out: Path | None = None) -> Path:
     ax.axvline(0, color=INK, lw=0.8, zorder=5)
     ax.set_yticks(y)
     ax.set_yticklabels([d[0] for d in deltas], fontsize=6.1)
-    ax.set_xlabel(r"change in transport $R^2$ vs. full model")
+    ax.set_xlabel(r"change in transport $R^2$ vs. full model (symlog)")
     ax.set_title(f"full model: $R^2$ = {full['transport_r2']:.3f}", fontsize=6.8, pad=3)
+    # Two ablations dominate the range, so a linear axis would flatten every
+    # other row to invisibility. A symmetric log axis keeps both readable and
+    # stays honest about the sign and the ordering.
+    ax.set_xscale("symlog", linthresh=0.01, linscale=0.6)
     for yi, v in zip(y, vals):
-        ax.text(v + np.sign(v) * 0.012, yi, f"{v:+.3f}", va="center",
-                ha="left" if v >= 0 else "right", fontsize=5.6, color=INK2)
-    pad = 0.18 * (max(vals) - min(vals) + 1e-6)
-    ax.set_xlim(min(vals) - pad * 2.2, max(vals) + pad * 2.2)
+        ax.text(v * (1.5 if abs(v) > 0.01 else 1.0) + np.sign(v) * 0.003, yi,
+                f"{v:+.3f}", va="center", ha="left" if v >= 0 else "right",
+                fontsize=5.6, color=INK2)
+    lo, hi = min(vals), max(vals)
+    ax.set_xlim(lo * 4.0 if lo < 0 else -0.01, hi * 4.0 if hi > 0 else 0.01)
+    ax.set_xticks([-1, -0.1, -0.01, 0, 0.01, 0.1])
+    ax.set_xticklabels(["-1", "-0.1", "-0.01", "0", "0.01", "0.1"], fontsize=5.8)
     hairline_grid(ax, "x")
     panel_label(ax, "a", dx=-0.55, dy=1.13)
 
@@ -98,11 +105,13 @@ def main(out: Path | None = None) -> Path:
                     label=name, zorder=3, linestyle="none")
     for key, _, col in keys:
         ax.axvline(full[key], color=col, lw=0.8, linestyle=(0, (3, 2)), zorder=2)
+    ax.set_xscale("log")                 # one ablation sends GRE past 6
     ax.set_yticks(yy)
     ax.set_yticklabels([])
     ax.set_ylim(-0.7, len(order) - 0.3)
-    ax.set_xlabel("metric value")
-    ax.legend(fontsize=5.9, loc="lower right", handletextpad=0.25, borderpad=0.15)
+    ax.set_xlabel("metric value (log)")
+    ax.legend(fontsize=5.9, loc="upper right", handletextpad=0.25, borderpad=0.15,
+              framealpha=0.9, edgecolor="none")
     ax.set_title("same rows as (a); dashed = full model", fontsize=6.5, pad=3)
     hairline_grid(ax, "x")
     panel_label(ax, "b", dx=-0.10, dy=1.13)

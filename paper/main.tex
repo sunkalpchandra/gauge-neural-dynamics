@@ -598,19 +598,33 @@ the predicted obstruction rather than an optimisation artefact.
 
 Each ablation removes or replaces one ingredient and is refitted from scratch on
 the place-cell simulation (Fig.~\ref{fig:ablations}, Table~\ref{tab:ablations},
-Appendix~\ref{app:extra}). Removing the gauge, which is exactly the no-context
-latent model, costs \ablNoGaugeDelta{} in transport $R^2$: the largest single
-effect, and the clearest evidence that the gauge rather than the extra parameters
-is doing the work. Removing the group-consistency terms costs \ablNoGroupDelta{}
-in prediction while degrading GCS to \ablNoGroupGcs, so a component can matter
-for geometry without mattering much for fit; removing the topology term costs
-\ablNoTopoDelta{} in transport but lowers MPS from \ablFullMps{} to
-\ablNoTopoMps. Truncating BCH at first order lowers GCS to \ablBchOneGcs, as it
-must for a non-abelian family. The latent dimension sweep shows a useful
-asymmetry: under-parameterising is costly (\ablDimTwo{} at $d=2$) while
-over-parameterising is nearly free (\ablDimTwenty{} at $d=20$), and since the
-true latent dimension of a recording is unknown, that is the asymmetry one
-wants.
+Appendix~\ref{app:extra}). Two components are indispensable and most of the rest
+are not. Removing the gauge, which is exactly the no-context latent model, costs
+\ablNoGaugeDelta{} in transport $R^2$ and pushes GRE to \ablNoGaugeGre, past the
+no-transformation null. It also attains a perfect GCS of \ablNoGaugeGcs{} while
+moving the latent by \ablNoGaugeMag: doing nothing composes flawlessly, which is
+the sharpest illustration we have of why GCS must never be read without the
+magnitude beside it. Removing the transport term is worse still
+(\ablNoTransportDelta), and fails in the opposite direction, learning large
+transformations that compose well and mean nothing (magnitude
+\ablNoTransportMag, GCS \ablNoTransportGcs, GRE \ablNoTransportGre).
+
+Anchoring is the instructive case. Dropping it costs essentially nothing in fit
+(\ablNoAnchorDelta) but raises GRE from \ablFullGre{} to \ablNoAnchorGre, again
+past the null. That is exactly what gauge fixing is for: it does not make the
+model fit better, it makes the transformation identifiable.
+
+The remaining terms are close to neutral here, and we report that rather than
+dropping them. The group-consistency term buys composition consistency (GCS
+\ablFullGcs{} with it against \ablNoGroupGcs{} without) at a slight cost in
+recovery; the topology term moves neither transport nor MPS appreciably; and the
+BCH truncation order makes no measurable difference (GCS \ablBchOneGcs{} at
+first order against \ablFullGcs{} at second), because at the transformation
+magnitudes reached here the second-order term is small next to the other sources
+of error. The latent dimension sweep shows a useful asymmetry: under-parameterising
+is costly (\ablDimTwo{} at $d=2$, GRE \ablDimTwoGre) while over-parameterising is
+nearly free (\ablDimTwenty{} at $d=20$). Since the true latent dimension of a
+recording is unknown, that is the asymmetry one wants.
 
 For robustness (Fig.~\ref{fig:robustness}, Appendix~\ref{app:extra}) we vary observation noise from
 \robNoiseLo{} to \robNoiseHi{} times the activity standard deviation, substitute

@@ -437,6 +437,24 @@ def do_exp4(macros: dict) -> None:
                          sem(t, "A4: latent dim 2", "transport_r2")),
         "ablDimTwenty": fmt(val(t, "A4: latent dim 20", "transport_r2"),
                             sem(t, "A4: latent dim 20", "transport_r2")),
+        "ablDimTwoGre": fmt(val(t, "A4: latent dim 2", "gre"), sem(t, "A4: latent dim 2", "gre")),
+        "ablFullGre": fmt(val(t, "full", "gre"), sem(t, "full", "gre")),
+        "ablFullGcs": fmt(val(t, "full", "gcs"), sem(t, "full", "gcs")),
+        # The no-gauge ablation is the sharpest demonstration that GCS has to be
+        # read beside the transformation magnitude: doing nothing composes
+        # perfectly.
+        "ablNoGaugeGre": fmt(val(t, "A1: no gauge", "gre"), sem(t, "A1: no gauge", "gre"), 2),
+        "ablNoGaugeGcs": fmt(val(t, "A1: no gauge", "gcs"), sem(t, "A1: no gauge", "gcs")),
+        "ablNoGaugeMag": fmt(val(t, "A1: no gauge", "transform_magnitude"),
+                             sem(t, "A1: no gauge", "transform_magnitude")),
+        "ablNoTransportGre": fmt(val(t, "no transport loss", "gre"),
+                                 sem(t, "no transport loss", "gre"), 2),
+        "ablNoTransportGcs": fmt(val(t, "no transport loss", "gcs"),
+                                 sem(t, "no transport loss", "gcs")),
+        "ablNoTransportMag": fmt(val(t, "no transport loss", "transform_magnitude"),
+                                 sem(t, "no transport loss", "transform_magnitude"), 2),
+        "ablNoAnchorDelta": fmt(val(t, "no anchoring", "transport_r2") - full, None),
+        "ablNoAnchorGre": fmt(val(t, "no anchoring", "gre"), sem(t, "no anchoring", "gre")),
     })
 
 
