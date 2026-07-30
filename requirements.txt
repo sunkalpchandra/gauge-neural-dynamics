@@ -1,0 +1,21 @@
+# Pinned to the versions the reported results were produced with.
+# CPU only: the gauge uses torch.matrix_exp and torch.linalg.lstsq, which have
+# no MPS implementation.
+torch==2.13.0
+numpy==2.4.6
+scipy==1.18.0
+scikit-learn==1.9.0
+matplotlib==3.11.1
+pandas==3.0.5
+PyYAML==6.0.3
+tqdm==4.70.0
+
+# topology
+ripser==0.6.15
+persim==0.3.8
+
+# baseline
+umap-learn==0.5.12
+
+# tests
+pytest==9.1.1

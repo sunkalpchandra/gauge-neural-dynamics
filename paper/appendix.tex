@@ -1,0 +1,172 @@
+% =====================================================================
+% Appendix
+% =====================================================================
+\section{Implementation details}
+\label{app:details}
+
+\subsection{Compute and reproducibility}
+
+Everything runs on CPU. The models are small, under $10^6$ parameters, and the
+gauge relies on \texttt{matrix\_exp} and \texttt{linalg.lstsq}, neither of which
+is implemented for Apple's MPS backend. Python, NumPy and PyTorch are seeded per
+run and deterministic kernels are requested. The five-seed suite takes a few
+hours on eight cores. A single entry point reproduces every number and figure
+from scratch; see the README.
+
+\begin{figure}[t]
+  \centering
+  \gndfig{fig2_architecture.pdf}{\textwidth}
+  \caption{\textbf{Architecture and objective.} Only the gauge is context
+  dependent. Encoder and decoder are shared and context blind, so a context
+  difference has nowhere else to go.}
+  \label{fig:architecture}
+\end{figure}
+
+\subsection{Model and optimisation}
+
+Encoder and decoder are 3-layer MLPs, 192 hidden units, layer normalisation,
+GELU. The context encoder is a 2-layer $\tanh$ MLP with 64 hidden units and a
+small-scale output head, followed by anchoring at the reference context. The
+latent dimension is 6, except in the motor simulation where it is 8 to
+accommodate the condition-independent component, and $K=6$ generators are used
+throughout. AdamW, learning rate $2\times10^{-3}$, weight decay $10^{-5}$, batch
+size 256, gradient clipping at norm 1, cosine annealing over 200--250 epochs.
+The ablations use a shorter schedule of 120 epochs on 1500 samples, applied
+identically to every configuration including the unablated model, since what is
+being compared there is the effect of removing an ingredient rather than the
+absolute level.
+Loss weights are $\lambda_{\mathrm{t}}=1$, $\lambda_{\mathrm{i}}=1$,
+$\lambda_{\mathrm{g}}=0.2$, $\lambda_{\mathrm{c}}=0.05$,
+$\lambda_{\mathrm{h}}=0.5$. The gauge-dependent terms are ramped in linearly over
+the first 15\% of training, so the encoder is not asked to satisfy a
+transformation before it has a latent to transform. Since $\theta$ depends only
+on the context, the matrix exponential is evaluated once per context per step
+rather than once per sample; transport and group terms are then batched over
+context pairs.
+
+For the flow gauge, $V_k(z)=G_kz+v_k+\eta\,m_k(z)$ with $\eta=0.5$ and $m_k$ a
+2-layer $\tanh$ MLP whose output layer is initialised to zero, so training starts
+exactly at the linear gauge. Flows use six RK4 steps. The vector-field bracket
+needs $K^2$ Jacobian-vector products, which dominates the cost, so structure
+constants are cached and refreshed every 25 steps and enter the objective as
+derived constants, in the spirit of a target network.
+
+\subsection{Simulations}
+
+\textit{Place cells.} 120 cells with Gaussian fields on a sunflower tiling of a
+unit disc, width $0.22$ with log-normal jitter, log-normal peak rates. Positions
+come from a momentum random walk with specular reflection at the wall, which
+gives the correlated, non-uniform occupancy of real foraging. Contexts act on
+position through $I$, $R(60^\circ)$, $R(-40^\circ)$ with a translation, an
+anisotropic stretch-and-shear $\mathrm{diag}(1.25,0.80)$ with shear $0.22$, and a
+radially graded twist $u \mapsto R(0.9\,(\|u\|/R)^2)\,u$, which is a
+diffeomorphism of the disc but not affine.
+
+\textit{Grid cells.} 100 cells in one module, spacing $0.42$, orientation
+$0.21$\,rad. Rates follow the standard three-cosine construction through an
+exponential non-linearity. Since $k_3 = k_2-k_1$ for a hexagonal lattice, the
+module's activity depends on position only through the phase pair, which is what
+makes the manifold a torus; we report the homology of a single module, matching
+\citet{gardner2022toroidal}. Contexts act on the phase: translations by fixed,
+well-spread offsets; a $60^\circ$ lattice rotation, whose matrix
+$K R_{60}K^{-1}$ is exactly integer and hence a genuine torus automorphism; and a
+non-integer rescaling by $1.37$ as the control.
+
+\textit{Motor cortex.} A 128-unit continuous-time $\tanh$ rate RNN,
+$\tau\dot x = -x + W\tanh(x) + Bu(t) + b + \sqrt{2\tau}\sigma\xi(t)$, with
+$\tau=50$\,ms and $\mathrm{d}t=10$\,ms, trained by BPTT for 1500 steps to emit
+hand velocity toward eight targets at two extents after a go cue, following a
+300\,ms preparatory period. Reaches are slightly curved, with lateral velocity
+equal to the derivative of the speed profile. The curvature is there for a
+reason. With perfectly straight reaches the canonical reach-plane coordinate is
+confined to a line, the second row of any readout from latent to reach plane is unconstrained
+by the reference context, and no method can be scored on recovering a rotation of
+that plane. Recorded activity is a random dense mixture of unit rates, as with an
+electrode array; twelve trials per condition are simulated with independent
+intrinsic noise. Splits are taken at the level of whole trials so no trajectory
+straddles the boundary.
+
+\subsection{Baselines}
+
+Each baseline supplies an observed-frame latent per sample per context and an
+estimated linear map from the canonical frame to each context's frame; the
+canonical latent is $z_c = T_c^{-1}w_c$ and every metric applies unchanged. PCA,
+UMAP, the autoencoder and the VAE embed pooled activity and have their
+transformations fitted post hoc by least squares on the training split.
+Procrustes runs PCA per context and aligns to the reference by orthogonal
+Procrustes \citep{schonemann1966generalized}. CCA aligns each context to the
+reference using the paired correspondence explicitly. Manifold alignment builds a
+joint graph with within-context $k$-nearest-neighbour edges and across-context
+correspondence edges, embeds with the graph Laplacian \citep{ham2005semisupervised},
+and extends out of sample by random-feature ridge regression.
+
+For the headline transport score, every method including ours is read out through
+the same non-linear map: a random-Fourier-feature ridge regression
+\citep{rahimi2007random} from observed-frame latent to activity, fitted on the
+training split. This separates the contribution of the latent and the
+transformation from decoder capacity. Where a method has a native decoder we
+report its own numbers too, and they are similar.
+
+\subsection{Metric details}
+
+Persistence diagrams come from \texttt{ripser} \citep{tralie2018ripser} on
+subsamples of up to 500 points, with filtration values normalised by the mean
+pairwise distance so diagrams are comparable across embeddings of different
+scale. The essential class is given the diameter of the cloud as its death time;
+capping it at the largest finite death instead would make it indistinguishable
+from the longest noise bar and destroy the gap that Betti estimation relies on.
+Before comparing diagrams we drop bars shorter than 1\% of the longest and keep
+at most the forty longest, which removes the near-diagonal noise band that would
+otherwise dominate an optimal matching. Betti numbers come from the largest
+multiplicative gap in the sorted lifetimes, required to exceed 1.5. That
+threshold is the one genuinely tuned constant in the analysis: at the sample sizes
+used here a disc produces spurious $H_1$ gaps of about 1.1 and a torus produces a
+true two-bar gap of about 1.9, so 1.5 separates them, but the separation for
+$H_1$ on a torus is the marginal case for any gap-based estimator and we report
+the achieved gap alongside the estimate.
+
+The post-hoc algebra fitted to a baseline's transformations uses the principal
+real matrix logarithm. We record the discarded imaginary part, which is large
+when a transformation lies outside the principal branch, for instance a rotation
+by more than $\pi$; in that case the extracted algebra element is not unique. The
+GRE chart is ridge regularised with a relative penalty, which matters when the
+latent dimension exceeds that of the ground-truth coordinate. An unpenalised fit
+places weights of order $1/\sigma$ on low-variance latent directions, so the
+chart is accurate on the reference context but extrapolates wildly onto the
+transported latents it is then applied to, penalising a method for having a rich
+latent rather than for getting the transformation wrong.
+
+\clearpage
+\section{Additional results}
+\label{app:extra}
+
+\begin{figure}[t]
+  \centering
+  \gndfig{fig6_ablations.pdf}{\textwidth}
+  \caption{\textbf{Ablations.} (a) Change in transport $R^2$ when one ingredient
+  is removed. (b) The same ablations on two geometric metrics, which respond
+  differently. (c) Latent dimension sweep.}
+  \label{fig:ablations}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \gndfig{fig7_robustness.pdf}{\textwidth}
+  \caption{\textbf{Robustness and scaling.} (a,b) Observation noise. (c) Number of
+  recorded cells. (d) Number of behavioural samples.}
+  \label{fig:robustness}
+\end{figure}
+
+\gndinput{generated/table_grid}
+
+\gndinput{generated/table_motor}
+
+\gndinput{generated/table_continuous}
+
+\gndinput{generated/table_ablations}
+
+\gndinput{generated/table_hippocampus_per_context}
+
+\gndinput{generated/table_grid_families}
+
+\gndinput{generated/table_noise}

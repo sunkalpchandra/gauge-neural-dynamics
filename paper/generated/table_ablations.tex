@@ -1,0 +1,19 @@
+\begin{table}[t]
+\centering
+\caption{\textbf{Ablations.} Each row removes or replaces one ingredient and is refitted from scratch on the place-cell simulation; $\Delta$ is the change in transport $R^2$ relative to the full model. Mean $\pm$ s.e.m.\ over 1 seeds. The latent-dimension sweep is shown in Fig.~\ref{fig:ablations}c.}
+\label{tab:ablations}
+\vspace{2pt}
+\small
+\begin{tabular}{lccccc}
+\toprule
+Configuration & Transport $R^2$ & $\Delta$ & CIS & GCS & GRE \\
+\midrule
+\textbf{full model} & 0.586\,\tiny{$\pm$\,0.000} & -- & 0.978\,\tiny{$\pm$\,0.000} & 0.890\,\tiny{$\pm$\,0.000} & 0.518\,\tiny{$\pm$\,0.000} \\
+\midrule
+A1: no gauge & 0.012\,\tiny{$\pm$\,0.000} & $-0.574$ & 0.940\,\tiny{$\pm$\,0.000} & 1.000\,\tiny{$\pm$\,0.000} & 1.278\,\tiny{$\pm$\,0.000} \\
+A2: no group loss & 0.591\,\tiny{$\pm$\,0.000} & $+0.004$ & 0.978\,\tiny{$\pm$\,0.000} & 0.879\,\tiny{$\pm$\,0.000} & 0.504\,\tiny{$\pm$\,0.000} \\
+A2a: no closure only & 0.587\,\tiny{$\pm$\,0.000} & $+0.001$ & 0.978\,\tiny{$\pm$\,0.000} & 0.890\,\tiny{$\pm$\,0.000} & 0.518\,\tiny{$\pm$\,0.000} \\
+A3: no topology & 0.588\,\tiny{$\pm$\,0.000} & $+0.002$ & 0.976\,\tiny{$\pm$\,0.000} & 0.901\,\tiny{$\pm$\,0.000} & 0.536\,\tiny{$\pm$\,0.000} \\
+\bottomrule
+\end{tabular}
+\end{table}

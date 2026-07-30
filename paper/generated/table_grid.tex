@@ -1,0 +1,24 @@
+\begin{table}[t]
+\centering
+\caption{\textbf{Experiment 2: grid-cell phase translations.} Mean $\pm$ s.e.m.\ over 1 seeds. The context family is the abelian translation group $T^2$, which acts on the $\mathbb{R}^4$ torus embedding as a pair of independent plane rotations, so the correct algebra is commuting and the correct Betti numbers are $(1,2,1)$.}
+\label{tab:grid}
+\vspace{2pt}
+\small
+\begin{tabular}{lccccccc}
+\toprule
+Method & Transport $R^2\!\uparrow$ & CIS$\uparrow$ & GCS$\uparrow$ & GRE$\downarrow$ & MPS$\uparrow$ & Alg.\ $R^2\!\uparrow$ & $\|T_c-\mathrm{id}\|$ \\
+\midrule
+\textbf{GND (ours)} & \textbf{0.941\,\tiny{$\pm$\,0.000}} & \textbf{0.999\,\tiny{$\pm$\,0.000}} & \textbf{0.994\,\tiny{$\pm$\,0.000}} & 0.447\,\tiny{$\pm$\,0.000} & 0.901\,\tiny{$\pm$\,0.000} & -- & 1.18\,\tiny{$\pm$\,0.00} \\
+\textbf{GND-flow} & -1.178\,\tiny{$\pm$\,0.000} & 0.981\,\tiny{$\pm$\,0.000} & 0.941\,\tiny{$\pm$\,0.000} & 10.276\,\tiny{$\pm$\,0.000} & 0.820\,\tiny{$\pm$\,0.000} & -- & 0.96\,\tiny{$\pm$\,0.00} \\
+\textbf{GND-gl} & -0.299\,\tiny{$\pm$\,0.000} & 0.982\,\tiny{$\pm$\,0.000} & 0.934\,\tiny{$\pm$\,0.000} & 1.694\,\tiny{$\pm$\,0.000} & 0.814\,\tiny{$\pm$\,0.000} & -- & 1.16\,\tiny{$\pm$\,0.00} \\
+\midrule
+PCA & 0.847\,\tiny{$\pm$\,0.000} & 0.936\,\tiny{$\pm$\,0.000} & 0.905\,\tiny{$\pm$\,0.000} & \textbf{0.158\,\tiny{$\pm$\,0.000}} & 0.880\,\tiny{$\pm$\,0.000} & -- & 1.21\,\tiny{$\pm$\,0.00} \\
+UMAP & 0.226\,\tiny{$\pm$\,0.000} & 0.246\,\tiny{$\pm$\,0.000} & 0.580\,\tiny{$\pm$\,0.000} & 0.553\,\tiny{$\pm$\,0.000} & 0.852\,\tiny{$\pm$\,0.000} & -- & 1.05\,\tiny{$\pm$\,0.00} \\
+Autoencoder & 0.801\,\tiny{$\pm$\,0.000} & 0.903\,\tiny{$\pm$\,0.000} & 0.480\,\tiny{$\pm$\,0.000} & 0.217\,\tiny{$\pm$\,0.000} & 0.910\,\tiny{$\pm$\,0.000} & -- & 1.20\,\tiny{$\pm$\,0.00} \\
+VAE & 0.117\,\tiny{$\pm$\,0.000} & 0.722\,\tiny{$\pm$\,0.000} & 0.000\,\tiny{$\pm$\,0.000} & 0.441\,\tiny{$\pm$\,0.000} & 0.854\,\tiny{$\pm$\,0.000} & -- & 1.00\,\tiny{$\pm$\,0.00} \\
+CCA & -0.184\,\tiny{$\pm$\,0.000} & 0.717\,\tiny{$\pm$\,0.000} & 0.488\,\tiny{$\pm$\,0.000} & 1.127\,\tiny{$\pm$\,0.000} & 0.827\,\tiny{$\pm$\,0.000} & -- & 1.37\,\tiny{$\pm$\,0.00} \\
+Procrustes & 0.152\,\tiny{$\pm$\,0.000} & 0.931\,\tiny{$\pm$\,0.000} & 0.601\,\tiny{$\pm$\,0.000} & 0.725\,\tiny{$\pm$\,0.000} & 0.868\,\tiny{$\pm$\,0.000} & -- & 1.05\,\tiny{$\pm$\,0.00} \\
+ManifoldAlign & 0.112\,\tiny{$\pm$\,0.000} & 0.976\,\tiny{$\pm$\,0.000} & 0.992\,\tiny{$\pm$\,0.000} & 0.974\,\tiny{$\pm$\,0.000} & \textbf{0.912\,\tiny{$\pm$\,0.000}} & -- & 0.04\,\tiny{$\pm$\,0.00} \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,0 +1,24 @@
+\begin{table}[t]
+\centering
+\caption{\textbf{Experiment 1: hippocampal place-cell remapping.} Mean $\pm$ s.e.m.\ over 1 seeds, all on held-out samples. Transport $R^2$ is the accuracy of predicting the population response in another environment; GRE is normalised so that $1.0$ is the score of assuming no transformation at all. The last column reports how far the recovered transformations actually move the latent, and must be read together with GCS: a family collapsed onto the identity composes perfectly while explaining nothing.}
+\label{tab:hippocampus}
+\vspace{2pt}
+\small
+\begin{tabular}{lccccccc}
+\toprule
+Method & Transport $R^2\!\uparrow$ & CIS$\uparrow$ & GCS$\uparrow$ & GRE$\downarrow$ & MPS$\uparrow$ & Alg.\ $R^2\!\uparrow$ & $\|T_c-\mathrm{id}\|$ \\
+\midrule
+\textbf{GND (ours)} & 0.610\,\tiny{$\pm$\,0.000} & 0.980\,\tiny{$\pm$\,0.000} & 0.891\,\tiny{$\pm$\,0.000} & 0.371\,\tiny{$\pm$\,0.000} & 0.890\,\tiny{$\pm$\,0.000} & -- & 0.47\,\tiny{$\pm$\,0.00} \\
+\textbf{GND-flow} & \textbf{0.680\,\tiny{$\pm$\,0.000}} & \textbf{0.989\,\tiny{$\pm$\,0.000}} & 0.869\,\tiny{$\pm$\,0.000} & 0.340\,\tiny{$\pm$\,0.000} & \textbf{0.916\,\tiny{$\pm$\,0.000}} & -- & 0.48\,\tiny{$\pm$\,0.00} \\
+\textbf{GND-unpaired} & 0.589\,\tiny{$\pm$\,0.000} & 0.950\,\tiny{$\pm$\,0.000} & 0.885\,\tiny{$\pm$\,0.000} & 0.273\,\tiny{$\pm$\,0.000} & 0.857\,\tiny{$\pm$\,0.000} & -- & 0.47\,\tiny{$\pm$\,0.00} \\
+\midrule
+PCA & 0.497\,\tiny{$\pm$\,0.000} & 0.465\,\tiny{$\pm$\,0.000} & 0.873\,\tiny{$\pm$\,0.000} & 0.424\,\tiny{$\pm$\,0.000} & 0.867\,\tiny{$\pm$\,0.000} & -- & 0.65\,\tiny{$\pm$\,0.00} \\
+UMAP & 0.566\,\tiny{$\pm$\,0.000} & 0.946\,\tiny{$\pm$\,0.000} & 0.000\,\tiny{$\pm$\,0.000} & \textbf{0.243\,\tiny{$\pm$\,0.000}} & 0.910\,\tiny{$\pm$\,0.000} & -- & 0.50\,\tiny{$\pm$\,0.00} \\
+Autoencoder & 0.347\,\tiny{$\pm$\,0.000} & 0.185\,\tiny{$\pm$\,0.000} & 0.881\,\tiny{$\pm$\,0.000} & 1.056\,\tiny{$\pm$\,0.000} & 0.829\,\tiny{$\pm$\,0.000} & -- & 0.58\,\tiny{$\pm$\,0.00} \\
+VAE & 0.307\,\tiny{$\pm$\,0.000} & 0.370\,\tiny{$\pm$\,0.000} & 0.889\,\tiny{$\pm$\,0.000} & 1.192\,\tiny{$\pm$\,0.000} & 0.816\,\tiny{$\pm$\,0.000} & -- & 0.58\,\tiny{$\pm$\,0.00} \\
+CCA & -0.044\,\tiny{$\pm$\,0.000} & 0.172\,\tiny{$\pm$\,0.000} & 0.000\,\tiny{$\pm$\,0.000} & 2.570\,\tiny{$\pm$\,0.000} & 0.880\,\tiny{$\pm$\,0.000} & -- & 1.23\,\tiny{$\pm$\,0.00} \\
+Procrustes & 0.178\,\tiny{$\pm$\,0.000} & 0.877\,\tiny{$\pm$\,0.000} & 0.528\,\tiny{$\pm$\,0.000} & 3.014\,\tiny{$\pm$\,0.000} & 0.844\,\tiny{$\pm$\,0.000} & -- & 1.13\,\tiny{$\pm$\,0.00} \\
+ManifoldAlign & 0.211\,\tiny{$\pm$\,0.000} & 0.939\,\tiny{$\pm$\,0.000} & \textbf{0.988\,\tiny{$\pm$\,0.000}} & 1.157\,\tiny{$\pm$\,0.000} & 0.852\,\tiny{$\pm$\,0.000} & -- & 0.08\,\tiny{$\pm$\,0.00} \\
+\bottomrule
+\end{tabular}
+\end{table}

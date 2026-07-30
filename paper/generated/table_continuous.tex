@@ -1,0 +1,18 @@
+\begin{table}[t]
+\centering
+\caption{\textbf{Generalisation over context space, and the winding obstruction.} Top: cue angles held out entirely from training are predicted from the cue value alone. Bottom: when the cue family closes into a circle, a single-chart field cannot represent the required winding; giving the same architecture the universal cover removes the problem. Mean $\pm$ s.e.m.\ over 5 seeds.}
+\label{tab:continuous}
+\vspace{2pt}
+\small
+\begin{tabular}{lccc}
+\toprule
+Setting & Transport $R^2\!\uparrow$ & GRE$\downarrow$ & Transport $R^2$, no transform \\
+\midrule
+trained cue angles & $0.694 \pm 0.005$ & $0.595 \pm 0.086$ & $-0.031 \pm 0.071$ \\
+\textbf{held-out cue angles} & $0.695 \pm 0.007$ & $0.479 \pm 0.068$ & $-0.034 \pm 0.094$ \\
+\midrule
+full circle, context space $= S^1$ & $0.467 \pm 0.024$ & $0.99 \pm 0.14$ & -- \\
+full circle, universal cover $\mathbb{R}$ & $0.677 \pm 0.002$ & $0.17 \pm 0.01$ & -- \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,0 +1,42 @@
+# Reference hyper-parameters. The experiment drivers construct their configs in
+# code (see gnd/experiments/exp*.py :: default_config); this file records the
+# shared defaults in one readable place and is what to edit when sweeping by hand.
+
+model:
+  n_latent: 6            # 8 for the motor simulation
+  encoder: mlp           # mlp | vae
+  hidden: 192
+  depth: 3
+  activation: gelu
+
+gauge:
+  kind: linear           # linear | flow | none
+  algebra: gl            # gl | so | sl | aff | se   (so for toroidal latents)
+  n_generators: 6
+  anchor: true           # gauge fixing: T_ref = I exactly
+  bch_order: 2
+  flow_steps: 6
+  flow_nonlinearity: 0.5
+
+loss:
+  w_recon: 1.0
+  w_transport: 1.0
+  w_invariance: 1.0
+  w_group: 0.2
+  w_closure: 0.05
+  w_topology: 0.5
+  w_kl: 0.001
+  alignment_mode: paired # paired | mmd  (mmd = correspondence free)
+
+optim:
+  lr: 0.002
+  weight_decay: 0.00001
+  epochs: 200
+  batch_size: 256
+  grad_clip: 1.0
+  warmup_frac: 0.15
+
+evaluation:
+  split_frac: 0.8
+  seeds: [0, 1, 2, 3, 4]
+  topology_points: 400

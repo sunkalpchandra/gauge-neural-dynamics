@@ -1,0 +1,659 @@
+% =====================================================================
+% Gauge Neural Dynamics
+% NeurIPS 2026 Workshop on Symmetry and Geometry in Neural Representations
+%
+% Every numeric value here comes from generated/numbers.tex and every table
+% from generated/table_*.tex, both produced by scripts/make_tables.py from
+% results/*/results.json. Nothing numeric is typed into this file.
+% =====================================================================
+\documentclass{article}
+
+% Replace with the official neurips_<year>.sty when available; same layout.
+\usepackage[preprint]{neurips_workshop}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{placeins}
+\usepackage[round,authoryear]{natbib}
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue]{hyperref}
+
+\graphicspath{{figures/}{../figures/}}
+
+\theoremstyle{plain}
+\newtheorem{proposition}{Proposition}
+
+\newcommand{\GL}{\mathrm{GL}}
+\newcommand{\gl}{\mathfrak{gl}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Mfd}{\mathcal{M}}
+\newcommand{\Ctx}{\mathcal{C}}
+\newcommand{\bch}{\mathrm{BCH}}
+
+% Development helpers: keep the build informative when a result is not yet in.
+% scripts/build_paper.sh refuses to report success while any of these fire.
+\newcommand{\gndinput}[1]{\IfFileExists{#1.tex}{\input{#1}}{%
+  \begin{center}\fbox{\textsf{\small [table pending]}}\end{center}}}
+\newcommand{\gndfig}[2]{\IfFileExists{figures/#1}{\includegraphics[width=#2]{#1}}{%
+  \fbox{\parbox[c][1.1in][c]{#2}{\centering\textsf{\small [figure pending]}}}}}
+
+\IfFileExists{generated/numbers.tex}{\input{generated/numbers}}{}
+
+\title{Gauge Neural Dynamics: Learning Context-Dependent\\Coordinate Systems in
+Biological Neural Representations}
+
+\author{%
+  Anonymous Author(s)\\
+  Affiliation\\
+  \texttt{email}
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Place fields rotate with a cue card. Grid phases shift coherently between
+environments. Motor cortical trajectories for different reach directions look
+like rotated copies of one another. In each case the geometry appears to be
+the same object seen in a different frame, but fitting one manifold to pooled
+activity has no way to say so and absorbs the difference into the residual. We
+model the frame change directly: an
+invariant latent state $z$ is read out through a tuning map $f$ shared across
+contexts, after a context-dependent transformation $x_c = f(T_c(z))$, with $T_c$
+the exponential of a context-dependent element of a Lie algebra learned from
+data. Identity and exact invertibility follow from the construction; closure
+under composition does not, so we measure it, using structure constants obtained
+by projecting the learned commutators back onto the algebra. We define four
+metrics for context-dependent geometry and apply them identically to our model
+and to seven baselines. On simulations of hippocampal remapping, grid-cell phase
+translation and a trained reaching network, the learned gauge recovers the
+generating transformations and predicts activity in contexts held out of
+training, which no baseline does. The learned algebra is abelian where the
+biology says it should be and non-abelian where it should not. We also show that
+a single-chart gauge field cannot cover a cyclic context variable, the failure
+appearing where the topology predicts. Two conditions were built so that no
+latent gauge transformation exists; the model fails on both, as intended.
+\end{abstract}
+
+% =====================================================================
+\section{Introduction}
+% =====================================================================
+
+Rotate the polarising cue in a cylinder and the entire CA1 place-cell map
+rotates with it \citep{muller1987effects,bostock1991experience}. Stretch the
+enclosure and the map stretches \citep{okeefe1996geometric}. Morph between two
+familiar shapes and it deforms in a graded way
+\citep{wills2005attractor,leutgeb2005independent}. In entorhinal cortex, grid
+modules shift and rotate coherently across environments
+\citep{fyhn2007hippocampal} and rescale after the enclosure changes
+\citep{barry2007experience}. In motor cortex, the rotational structure of the
+population response differs systematically with reach condition
+\citep{churchland2012neural,vyas2020computation}, and yet the geometry is stable
+enough across days, and even across animals, to be recovered by alignment
+\citep{gallego2020longterm,degenhart2020stabilization,safaie2023preserved}.
+
+These observations share a form. The manifold does not appear to change shape;
+it appears to be expressed in a different coordinate system. Standard latent
+variable analysis cannot represent that. A single embedding is fitted to
+activity pooled across conditions
+\citep{cunningham2014dimensionality,gallego2017neural}, so a coherent rotation of
+the map and an incoherent scattering of it are, to the model, the same amount of
+unexplained variance.
+
+Gauge theory is the natural language for a quantity defined only up to a local
+choice of coordinates, together with a rule for translating between choices
+\citep{kobayashi1963foundations,nakahara2003geometry}. We use it literally. Let
+$z \in \Mfd$ be the latent computational state, let $f$ be the tuning of the
+recorded population, and let each context $c$ act on the frame:
+\begin{equation}
+  x_c \;=\; f\!\left(T_c(z)\right), \qquad T_c : \Mfd \to \Mfd .
+  \label{eq:gnd}
+\end{equation}
+
+The content of \eqref{eq:gnd} lies in what it forbids. Since $f$ is shared and
+never sees the context, any difference between contexts must be a transformation
+of the latent. Effects that are not of that form cannot be absorbed and appear
+as error instead. Two of the conditions below are constructed so that no latent
+gauge transformation exists, and we check that the model fails on them.
+
+We contribute, first, a framework in which $T_c$ is the exponential of a
+context-dependent element of a learned finite-dimensional Lie algebra
+(Sec.~\ref{sec:method}), with identity and exact invertibility structural and
+closure measured rather than assumed, together with a proof that a single-chart
+field of this form cannot cover a context space on which the required group
+elements wind (Prop.~\ref{prop:winding}). Second, three simulations built from
+established phenomenology -- place-cell remapping, grid-cell translation on a
+torus, and a reaching RNN trained by BPTT -- on which the learned transformations
+recover the generating geometry (Sec.~\ref{sec:experiments}); one consequence,
+that the eigenvalues of latent dynamics are context invariant while their
+eigenplanes rotate, is testable in existing recordings without fitting our model.
+Third, four metrics for representational consistency across contexts, each with
+the diagnostic needed to keep it from being satisfied trivially
+(Sec.~\ref{sec:metrics}).
+
+% =====================================================================
+\section{Related work}
+% =====================================================================
+
+Population activity is routinely summarised with latent variable models, from
+linear factorisations \citep{cunningham2014dimensionality} to sequential
+autoencoders \citep{pandarinath2018inferring} and contrastive embeddings
+\citep{schneider2023cebra}. Context and session changes, when handled, are
+handled post hoc: canonical correlation \citep{hotelling1936relations},
+orthogonal Procrustes \citep{schonemann1966generalized}, or semi-supervised
+manifold alignment \citep{ham2005semisupervised}, as used to stabilise
+brain--computer interfaces \citep{degenhart2020stabilization} and to compare
+across days and animals \citep{gallego2020longterm,safaie2023preserved}. All fit
+one transformation per recorded condition, so they cannot ask whether the
+transformations form a group and are undefined at a condition that was not
+recorded. Both questions are central here.
+
+The phenomena we simulate are coherent place-field remapping
+\citep{muller1987effects,colgin2008understanding}, grid translation and rotation
+\citep{hafting2005microstructure,fyhn2007hippocampal,stensola2012entorhinal} and
+grid rescaling \citep{barry2007experience}; that a single grid module's manifold
+is a torus was shown with persistent homology by \citet{gardner2022toroidal},
+which our second experiment mirrors. Network models treat remapping as attractor
+reorganisation \citep{burak2009accurate,low2021remapping} or as inference over a
+structural code \citep{whittington2020tolman}, where we ask instead what
+transformation relates the observed representations.
+Equivariant networks assume a known group
+\citep{cohen2016group,weiler2019general,bronstein2017geometric}, and gauge
+equivariant networks handle the case where no global frame exists
+\citep{cohen2019gauge,bronstein2021geometric}. Nearest to us is work that learns
+a Lie algebra rather than assuming one
+\citep{dehmamy2021automatic,finzi2021practical,connor2021variational,keller2021topographic};
+the difference is in the target, since there the group is a prior to impose and
+here it is a property of a biological system to be estimated and reported with
+its defects. Our topology term follows \citet{moor2020topological}, and the
+analysis uses persistent homology
+\citep{edelsbrunner2002topological,carlsson2009topology,tralie2018ripser}, which
+has an established role in neural coding
+\citep{singh2008topological,curto2017what,chaudhuri2019intrinsic}.
+
+% =====================================================================
+\section{Method}
+\label{sec:method}
+% =====================================================================
+
+\subsection{A learned Lie algebra of gauge transformations}
+
+Let $z \in \Mfd \subseteq \R^{d}$ and let $c \in \Ctx$ be an observable context
+variable: an environment label, a cue direction, a task condition. We learn
+generators $G_1,\dots,G_K \in \gl(d)$ spanning $\mathfrak{g} =
+\mathrm{span}\{G_k\}$ together with a context embedding $\theta : \Ctx \to
+\R^{K}$, and set
+\begin{equation}
+  A(c) \;=\; \sum_{k=1}^{K}\theta_k(c)\,G_k,
+  \qquad
+  T_c(z) \;=\; \exp\!\big(A(c)\big)\, z .
+  \label{eq:gauge}
+\end{equation}
+
+Three properties come for free. Smoothness of $c \mapsto T_c$ follows from that
+of $\theta$ and $\exp$; invertibility is exact and in closed form,
+$T_c^{-1} = \exp(-A(c))$, with no learned inverse; and $T_{c_{\mathrm{ref}}} = I$
+is enforced by anchoring, $\theta(c) \mapsto \theta(c) -
+\theta(c_{\mathrm{ref}})$. Anchoring adds no capacity, since \eqref{eq:gnd} is
+invariant under $z \mapsto Sz$, $T_c \mapsto S T_c S^{-1}$, $f \mapsto f\circ
+S^{-1}$, and anchoring merely fixes the residual left-multiplication freedom.
+Generators are normalised to unit Frobenius norm, removing the $\theta
+\leftrightarrow G$ scale redundancy so the defects below are comparable across
+runs.
+
+The fourth property, closure under composition, is the informative one. By
+Baker--Campbell--Hausdorff, $\exp(A)\exp(B) = \exp(A + B + \tfrac12[A,B] +
+\dots)$, so $\{T_c\}$ is closed if and only if $\mathfrak{g}$ is a Lie
+subalgebra. We do not impose this. Projecting the commutators back onto
+$\mathfrak{g}$ by least squares gives structure constants and a residual,
+\begin{equation}
+  [G_i, G_j] \;=\; \sum_{k} f^{k}_{ij}\, G_k \;+\; R_{ij},
+  \qquad
+  \delta_{\mathrm{closure}} \;=\;
+  \big\langle \|R_{ij}\|_F / \|[G_i,G_j]\|_F \big\rangle_{i \neq j},
+  \label{eq:closure}
+\end{equation}
+averaged over pairs whose commutator is not numerically zero. The $f^{k}_{ij}$
+define a composition law on the algebra, $\theta_{a\cdot b} =
+\bch(\theta_a,\theta_b)$, truncated at second or third order. Both the training
+objective and the gauge consistency score are built on it, and it is exact when
+the learned algebra closes.
+
+Writing $g_{ab} = T_b T_a^{-1}$ makes \eqref{eq:gnd} look like a fibre bundle
+over $\Ctx$, but the cocycle condition $g_{bc}g_{ab} = g_{ac}$ is then automatic,
+the transitions being built from one globally defined family, and so tests
+nothing. What is not automatic is whether the composite stays inside the family,
+which is what \eqref{eq:closure} measures. Curvature does become measurable once
+transitions are chained around a loop in context space, and we report the
+resulting holonomy.
+
+\subsection{An obstruction}
+
+Continuous context variables expose a limitation that discrete labels hide.
+
+\begin{proposition}[winding obstruction]
+\label{prop:winding}
+Let $\theta : \Ctx \to \R^{K}$ be continuous and $T_c = \exp(\sum_k \theta_k(c)
+G_k) \in \GL(d,\R)^{+}$. For any loop $\gamma : S^1 \to \Ctx$, the induced loop
+$t \mapsto T_{\gamma(t)}$ is null-homotopic in $\GL(d,\R)^{+}$. Hence if the
+ground-truth family restricted to $\gamma$ represents a non-trivial class in
+$\pi_1(\GL(d,\R)^{+}) \cong \pi_1(SO(d))$, which is $\mathbb{Z}$ for $d=2$ and
+$\mathbb{Z}/2$ for $d \ge 3$, no choice of $K$ and no choice of generators can
+represent it.
+\end{proposition}
+
+\begin{proof}
+$\theta\circ\gamma$ is null-homotopic because $\R^K$ is contractible; let $H$
+contract it to a constant. Then $\exp(\sum_k H_k(\cdot,s) G_k)$ contracts
+$t \mapsto T_{\gamma(t)}$ within $\GL(d,\R)^{+}$, since $\exp$ is continuous and
+lands there. A null-homotopic loop represents the trivial class.
+\end{proof}
+
+This is a statement about topology, not about optimisation or capacity, and the
+remedy is the usual one: pass to a covering of $\Ctx$, or equivalently use more
+than one chart. Section~\ref{sec:continuous} checks both directions.
+
+\subsection{Non-linear gauges and shared latent dynamics}
+
+Replacing matrices with vector fields extends \eqref{eq:gauge} to
+diffeomorphisms. With $V_k(z) = G_k z + v_k + \eta\, m_k(z)$ for a small MLP
+$m_k$, we take $T_c$ to be the time-one flow of $\sum_k \theta_k(c) V_k$,
+integrated with RK4 and inverted by integrating the negated field. At $\eta=0$
+this reduces to \eqref{eq:gauge} exactly. The bracket $[V_i,V_j] = DV_j V_i -
+DV_i V_j$ is evaluated by automatic differentiation and projected pointwise onto
+$\mathrm{span}\{V_k\}$, leaving \eqref{eq:closure} unchanged.
+
+If the latent computation is shared, so is its flow. With canonical dynamics
+$\dot z = F(z)$, the dynamics measured in context $c$ are the push-forward
+$F_c(w) = DT_c(T_c^{-1}w)\, F(T_c^{-1}w)$, which for a linear gauge is
+conjugation,
+\begin{equation}
+  F_c \;=\; M_c\, F\, M_c^{-1}, \qquad M_c = \exp(A(c)).
+  \label{eq:conjugacy}
+\end{equation}
+Conjugation preserves eigenvalues, so \eqref{eq:conjugacy} predicts that the
+rotation frequency of the linearised latent dynamics is shared across conditions
+while the rotation plane turns with them. This can be checked in recorded data
+without fitting our model, and we check it in Sec.~\ref{sec:motor}.
+
+\subsection{Architecture and objective}
+
+The encoder $E$ and decoder $D$ are shared MLPs that never receive the context
+(Fig.~\ref{fig:architecture}, Appendix~\ref{app:details}): the encoder returns
+$w_c = E(x_c)$, the gauge pulls it back to $z = T_c^{-1}(w_c)$, and the decoder
+maps a frame-specific latent to activity. Giving the encoder the context would
+let it absorb the transformation and leave the gauge unidentifiable. The
+objective is
+\begin{align}
+  \mathcal{L} \;=\;
+  &\underbrace{\big\|D(E(x_c)) - x_c\big\|^2}_{\text{reconstruction}}
+  \;+\; \lambda_{\mathrm{t}}
+  \underbrace{\big\|D\big(T_b T_a^{-1} E(x_a)\big) - x_b\big\|^2}_{\text{transport}}
+  \;+\; \lambda_{\mathrm{i}}
+  \underbrace{\mathbb{E}_s\,\mathrm{tr}\,\mathrm{Cov}_c\big[z_{s,c}\big]}_{\text{invariance}}
+  \nonumber\\[-1pt]
+  &+\; \lambda_{\mathrm{g}}
+  \underbrace{\frac{\big\|T_a T_b z - T_{a\cdot b} z\big\|^2}
+                   {\big\|T_a T_b z - z\big\|^2}}_{\text{group}}
+  \;+\; \lambda_{\mathrm{c}}\, \delta_{\mathrm{closure}}
+  \;+\; \lambda_{\mathrm{h}}\, \mathcal{L}_{H_0}(x,z)
+  \;+\; \text{reg.}
+  \label{eq:loss}
+\end{align}
+The transport term does the work: predict the response in context $b$ from one
+recorded in context $a$, using only the shared decoder and the learned
+transformation. The group term is normalised by how far the composite map moves
+points, which stops $T \equiv \mathrm{id}$ from scoring perfectly, and
+$\mathcal{L}_{H_0}$ is the persistence-signature loss of
+\citet{moor2020topological}. The invariance term uses paired samples where
+correspondence is available; a correspondence-free variant replaces it with a
+multi-scale kernel MMD \citep{gretton2012kernel} between canonical latent
+distributions. We report both.
+
+\begin{figure}[t]
+  \centering
+  \gndfig{fig1_concept.pdf}{\textwidth}
+  \caption{\textbf{Gauge neural dynamics.} (a) Fitting one manifold to pooled
+  activity turns context structure into residual scatter. (b) Context space is
+  the base of a bundle whose fibre is the latent manifold: one latent state,
+  expressed in a context-dependent frame, with learned transitions between
+  frames. (c) Composing the transformations of two contexts should land on the
+  transformation of their composite, as predicted by BCH with the learned
+  structure constants. The gap is the closure defect of Eq.~\eqref{eq:closure}.}
+  \label{fig:concept}
+\end{figure}
+
+% =====================================================================
+\section{Metrics}
+\label{sec:metrics}
+% =====================================================================
+
+The metrics have to apply to methods that estimate no transformation at all,
+otherwise the comparison is not a comparison. For such a baseline we fit an
+affine map per context on the training split, take its real matrix logarithm, and
+extract a $K$-dimensional algebra by PCA; every metric then runs through the same
+code as for our model. This is generous, since it hands them the paired
+correspondence our correspondence-free variant does not use. All values are on
+held-out samples.
+
+\textit{Gauge consistency} (GCS) compares the realised composition against the
+BCH prediction, $\varepsilon(a,b) = \|T_aT_b z - T_{a\cdot b}z\| / \|T_aT_b z -
+z\|$, and reports $\max(0, 1 - \langle\varepsilon\rangle)$. The denominator is
+not decoration: without it a family collapsed onto the identity would score
+perfectly, and one of our baselines does exactly that. We therefore always report
+the transformation magnitude $\langle\|T_c(z)-z\|\rangle$ beside it.
+
+\textit{Context invariance} (CIS) is an intraclass correlation on the canonical
+latent, $\mathrm{between}/(\mathrm{between}+\mathrm{within})$ with
+$\mathrm{within} = \mathbb{E}_s \mathrm{tr}\,\mathrm{Cov}_c[z_{s,c}]$ and
+$\mathrm{between} = \mathrm{tr}\,\mathrm{Cov}_s[\bar z_s]$. As the context
+component grows the raw ratio tends to $1/C$, not to zero, since averaging $C$
+contexts shrinks noise in the per-sample mean by that factor; we therefore
+chance-correct to $(\mathrm{CIS}-1/C)/(1-1/C)$, without which values would not be
+comparable between five contexts and sixteen. A collapsed latent still scores
+zero, having no between-sample variance.
+
+\textit{Geometric recovery} (GRE) has to contend with the conjugation freedom. We
+fit one ridge-regularised affine chart $\varphi$ from canonical latent to
+ground-truth coordinate on the reference context, freeze it, and measure the
+failure of $\varphi \circ T_c = T^{*}_c \circ \varphi$:
+\begin{equation}
+  \mathrm{GRE}_c \;=\; \big\|\varphi(T_c(z)) - T^{*}_c(u)\big\| \,\big/\,
+                       \big\|T^{*}_c(u) - u\big\| .
+  \label{eq:gre}
+\end{equation}
+Normalising by the size of the true transformation makes $\mathrm{GRE}=1$ the
+score of assuming no transformation, so only values below $1$ mean anything.
+Where the ground-truth coordinate is not affine in the latent a fitted chart is
+unreliable; we say so rather than quoting the number, and fall back on a
+chart-free alternative, the leave-one-context-out $R^2$ of predicting
+$\mathrm{vec}\,\log T^{*}_c$ linearly from $\theta_c$.
+
+\textit{Manifold preservation} (MPS) rests on manifolds related by a
+diffeomorphism having the same homology, so agreement of persistence diagrams
+across contexts is necessary for \eqref{eq:gnd}. We compute Vietoris--Rips
+diagrams of the canonical latent per context and report $1/(1 + \langle
+d_{B}\rangle)$, with $d_B$ the bottleneck distance to the diagram of the true
+manifold. Bottleneck rather than Wasserstein, since the summed transport cost
+grows with the number of bars. Betti numbers come from the largest multiplicative
+gap in the barcode, reported with the achieved gap so a marginal call stays
+visible.
+
+\FloatBarrier
+% =====================================================================
+\section{Experiments}
+\label{sec:experiments}
+% =====================================================================
+
+Each simulation produces paired multi-context recordings: the same latent states
+seen through a shared bank of tuning curves in every context. Activity is
+z-scored with statistics pooled over contexts, since per-context scaling would
+remove part of what we are measuring. Models are fitted on 80\% of samples and
+every number is on the remainder, as mean $\pm$ s.e.m.\ over five seeds.
+Baselines are PCA, UMAP \citep{mcinnes2018umap}, an autoencoder, a VAE
+\citep{kingma2014auto}, CCA, per-context PCA with orthogonal Procrustes, and
+semi-supervised manifold alignment (Appendix~\ref{app:details}).
+
+\subsection{Hippocampal remapping}
+\label{sec:hippocampus}
+
+A simulated rodent forages in a circular arena while 120 place cells tile it with
+Gaussian fields. Five contexts share one bank of tuning curves and differ only in
+the coordinate frame: the familiar environment, two rotations, an anisotropic
+stretch-and-shear, and a radially graded twist. The last of these is a
+diffeomorphism but not an affine map, and so lies outside the reach of the linear
+gauge by construction.
+
+Fig.~\ref{fig:hippocampus}a shows what has to be explained: the field of one cell
+follows the cue. Fig.~\ref{fig:hippocampus}b shows the latent cloud with all
+contexts overlaid; before the gauge is applied the contexts fan apart, afterwards
+they collapse. Transport $R^2$ is
+\hipGNDtransport{} for GND against \hipBestBaseTransport{} for the best baseline
+(\hipBestBaseName), with CIS \hipGNDcis{} and GRE \hipGNDgre.
+
+Manifold alignment deserves a comment: it attains GCS \hipMAgcs, higher than our
+\hipGNDgcs, while moving the latent by only \hipMAmag{} against our \hipGNDmag.
+Its transformations compose because they are almost trivial, which is the failure
+mode the magnitude column exists to catch.
+
+The morph context behaves as expected (Table~\ref{tab:hip-per-context}): the
+linear gauge does worst there and the flow gauge recovers it, improving overall
+GRE from \hipGNDgre{} to \hipFlowGre. The correspondence-free variant, which
+matches distributions instead of learning which samples correspond, reaches
+transport $R^2$ \hipUnpairedTransport{} and CIS \hipUnpairedCis; that matters,
+since paired samples are rarely available in real recordings.
+
+\begin{figure}[t]
+  \centering
+  \gndfig{fig3_hippocampus.pdf}{\textwidth}
+  \caption{\textbf{Hippocampal remapping.} (a) Rate maps of one place cell across
+  contexts; the field follows the cue coherently. (b) Latent cloud, all contexts
+  overlaid, coloured by true heading. Aligned contexts give one smooth gradient;
+  misaligned ones interleave. First panel: our observed-frame latent, before the
+  gauge. Second: our canonical latent, after. Remainder: baselines after their own
+  post-hoc alignment.}
+  \label{fig:hippocampus}
+\end{figure}
+
+\gndinput{generated/table_hippocampus}
+
+\subsection{Grid-cell geometry}
+\label{sec:grid}
+
+A single grid module's activity depends on position only through a pair of
+phases, so its manifold is a torus \citep{gardner2022toroidal}. Embedding the
+phase pair as $(\cos\theta_1,\sin\theta_1,\cos\theta_2,\sin\theta_2)/\sqrt2$
+turns a phase translation into a pair of independent plane rotations, an element
+of the maximal torus of $SO(4)$. Three predictions follow: the learned algebra
+should be abelian, composition should be exact already at BCH order one, and the
+canonical latent should have Betti numbers $(1,2,1)$.
+
+Since a torus is not preserved by a general linear map, we restrict the gauge
+group to isometries; this is a geometric requirement rather than a convenience,
+and the unrestricted variant is worse (GRE \gridGLgre{} against \gridGNDgre,
+Table~\ref{tab:grid}, Appendix~\ref{app:extra}). The predictions hold. The generators nearly commute, with
+mean commutator norm \gridGNDabelian{} for unit-normalised generators, and GCS is
+\gridGNDgcs. The canonical latent is a torus (Fig.~\ref{fig:grid}c,d) that
+factorises into two circles carrying the two phases (Fig.~\ref{fig:grid}e,f), and
+Betti numbers $(1,2,1)$ are recovered in \gridGNDbetti{} of runs.
+
+Two further families probe the boundaries (Table~\ref{tab:grid-families}). Adding
+the $60^\circ$ lattice automorphism, an integer matrix and hence a genuine torus
+map, makes the group $T^2 \rtimes Z_6$ non-abelian, so a non-zero commutator is
+now the right answer and the norm rises to \gridRotAbelian; being non-linear on
+the $\R^4$ embedding, it defeats the linear gauge (GRE \gridRotGre) while the
+flow gauge does better (\gridRotFlowGre). The third family is a control we expect
+to fail: a non-integer grid rescaling \citep{barry2007experience} is well defined
+on the universal cover but is not a map on the torus at all, so no latent gauge
+transformation can express it. GRE there is \gridCtrlGre{} and transport $R^2$
+falls to \gridCtrlTransport. The framework says in advance which phenomena lie
+outside it, and the measurements agree.
+
+\begin{figure}[t]
+  \centering
+  \gndfig{fig4_grid_cells.pdf}{\textwidth}
+  \caption{\textbf{Grid-cell torus and translation group.} (a,b) Spatial rate maps
+  of one grid cell in the reference and a phase-shifted context. (c) Canonical
+  latent in its leading three principal components. (d) Its persistence barcode.
+  (e,f) The latent factorises into two circles carrying the two phases. (g)
+  Pairwise commutator norms of the learned generators; for pure translations the
+  correct algebra is abelian. (h) Leave-one-context-out prediction of the true
+  phase shift from the learned algebra coordinates.}
+  \label{fig:grid}
+\end{figure}
+
+\subsection{Motor cortex}
+\label{sec:motor}
+
+A rate RNN is trained by BPTT to produce bell-shaped hand velocity toward each of
+eight targets at two reach extents. We impose no symmetry on the recurrent
+weights, so whatever equivariance the solution has is learned from the task. This
+lets us measure a ceiling instead of assuming an exact ground truth: after
+optimally aligning trial-averaged trajectories of equal-extent conditions, the
+circuit's own equivariance residual is \motCircuitEquiv.
+
+Contexts are the sixteen reach conditions. GND reaches transport $R^2$
+\motGNDtransport{} while every baseline is negative, the best being
+\motBestBaseTransport{} for \motBestBaseName. A negative value means the method
+predicts another condition's population response worse than that condition's own
+mean does. Trajectory alignment error is \motGNDtraj{} against \motBestBaseTraj{}
+for the best baseline (\motBestBaseTrajName), and Fig.~\ref{fig:motor}a,b shows
+the collapse directly. For the conjugacy prediction of \eqref{eq:conjugacy},
+fitting linear dynamics separately per condition gives a frequency coefficient of
+variation of \motGNDfreqcv{} with mean rotation-plane angle \motGNDplane{}
+degrees. The circuit's own spread, measured from a PCA of the recorded activity,
+is \motRefFreqcv, so the learned latent reproduces it to within
+\motGNDfreqdev.
+
+Reading that comparison needs the same care as GCS. A small frequency CV is not
+in itself good: a latent that fails to separate conditions has no frequency
+spread at all. Manifold alignment reaches \motMAfreqcv{} while its transport
+$R^2$ is \motMAtransport. Matching the circuit's value, not undercutting it, is
+what Eq.~\eqref{eq:conjugacy} predicts.
+
+GRE is not a well-posed instrument here (\motGNDgre). Commanded hand velocity is
+not an affine function of the learned latent in a context-independent way, so a
+chart fitted on the reference context extrapolates unreliably onto transported
+latents. That is a property of the measurement rather than of the model, and it
+is why we introduced the chart-free alternative and lead with transport and
+trajectory alignment for this experiment.
+
+\begin{figure}[t]
+  \centering
+  \gndfig{fig5_motor_cortex.pdf}{\textwidth}
+  \caption{\textbf{Motor-cortex reach conditions.} (a) Trial-averaged trajectories
+  in the observed frame, one colour per reach direction. (b) The same after
+  inverting the learned gauge. (c) The strongest baseline after its own
+  alignment. (d) Trajectory alignment error, with and without an additional
+  optimal rigid map. (e) Cross-context transport. (f) Test of
+  Eq.~\eqref{eq:conjugacy}: spread of the top rotation frequency across
+  conditions, with the value from recorded activity as reference.}
+  \label{fig:motor}
+\end{figure}
+
+\subsection{A field over context space}
+\label{sec:continuous}
+
+Discrete labels can only ask whether a transformation was fitted per recorded
+condition. The stronger question is whether the model learns a field over context
+space: a map $c \mapsto T_c$ correct at cue values never observed. We present
+thirteen cue orientations spanning a $120^\circ$ arc, with the context variable
+being the cue direction $(\cos\alpha,\sin\alpha)$, and hold four out entirely.
+
+The field interpolates (Fig.~\ref{fig:continuous}a,b; Table~\ref{tab:continuous}).
+At held-out cue angles transport $R^2$ is \contHeld, essentially unchanged from
+\contTrained{} at trained angles, against \contIdentity{} for leaving the latent
+untransformed and \contNearest{} for re-using the nearest observed angle's
+transformation. Per-condition alignment methods cannot be evaluated here at all,
+having no transformation for a condition they never saw.
+
+Closing the family into a full circle triggers Prop.~\ref{prop:winding}. With
+context space $S^1$, mean transport $R^2$ over the circle is \contCirc, and the
+failure is localised: at the antipode of the reference cue it falls to
+\contCircAtPi{} with GRE \contCircGreAtPi, while near the reference it is
+unimpaired (Fig.~\ref{fig:continuous}c,d). Giving the identical architecture the
+universal cover, that is the unwrapped angle, removes the effect: \contLift{} on
+average and \contLiftAtPi{} at $180^\circ$, with GRE \contLiftGreAtPi. The two
+runs differ in nothing but the topology of the domain, which argues that this is
+the predicted obstruction rather than an optimisation artefact.
+
+\begin{figure}[t]
+  \centering
+  \gndfig{fig8_continuous_context.pdf}{\textwidth}
+  \caption{\textbf{The gauge field over context space.} (a) Learned algebra
+  coordinates as a function of cue angle, queried on a dense grid; circles mark
+  cues held out of training. (b) Transport at trained and held-out cue angles,
+  against the only two baselines definable for an unobserved condition. (c,d) The
+  winding obstruction. On a circular context space the failure is localised at the
+  branch point antipodal to the reference cue; on the universal cover it
+  disappears.}
+  \label{fig:continuous}
+\end{figure}
+
+\FloatBarrier
+% =====================================================================
+\section{Ablations and robustness}
+% =====================================================================
+
+Each ablation removes or replaces one ingredient and is refitted from scratch on
+the place-cell simulation (Fig.~\ref{fig:ablations}, Table~\ref{tab:ablations},
+Appendix~\ref{app:extra}). Removing the gauge, which is exactly the no-context
+latent model, costs \ablNoGaugeDelta{} in transport $R^2$: the largest single
+effect, and the clearest evidence that the gauge rather than the extra parameters
+is doing the work. Removing the group-consistency terms costs \ablNoGroupDelta{}
+in prediction while degrading GCS to \ablNoGroupGcs, so a component can matter
+for geometry without mattering much for fit; removing the topology term costs
+\ablNoTopoDelta{} in transport but lowers MPS from \ablFullMps{} to
+\ablNoTopoMps. Truncating BCH at first order lowers GCS to \ablBchOneGcs, as it
+must for a non-abelian family. The latent dimension sweep shows a useful
+asymmetry: under-parameterising is costly (\ablDimTwo{} at $d=2$) while
+over-parameterising is nearly free (\ablDimTwenty{} at $d=20$), and since the
+true latent dimension of a recording is unknown, that is the asymmetry one
+wants.
+
+For robustness (Fig.~\ref{fig:robustness}, Appendix~\ref{app:extra}) we vary observation noise from
+\robNoiseLo{} to \robNoiseHi{} times the activity standard deviation, substitute
+Poisson spike counts, and vary population and sample size. Transport $R^2$ falls
+from \robGNDlo{} to \robGNDhi{} across the noise range while the best baseline
+reaches \robPCAhi; under Poisson counts it is \robGNDpoisson. With
+\robNeuronsLo{} recorded cells it is \robGNDneuronsLo, rising to
+\robGNDneuronsHi{} at \robNeuronsHi.
+
+\FloatBarrier
+% =====================================================================
+\section{Discussion}
+% =====================================================================
+
+Across three simulations drawn from different phenomena, treating context as a
+coordinate transformation of a shared latent rather than as extra latent variance
+recovers the generating transformation and predicts activity in contexts the
+model was never fitted on. The group structure is not decorative. The learned
+algebra is abelian exactly where the biology says it should be, for grid-cell
+phase translations, and non-abelian exactly where it should not be, once a
+lattice automorphism is added; and truncating the composition law degrades
+composition consistency as predicted.
+
+Two predictions are concrete enough to take to data. The first is
+\eqref{eq:conjugacy}: if reach conditions are related by a latent gauge
+transformation, the eigenvalues of the condition-wise linearised dynamics, and in
+particular the rotation frequency, should be shared while the eigenplanes rotate.
+This is measurable in existing motor cortex datasets without fitting anything of
+ours. The second follows from Prop.~\ref{prop:winding}: a smoothly varying cyclic
+context, such as a rotating cue, cannot be handled by any single continuous frame
+assignment, so remapping across a full $360^\circ$ cue rotation should show a
+discontinuity or hysteresis somewhere on the circle, where a non-cyclic
+manipulation of comparable size should not.
+
+These are simulations, built from published phenomenology and, for the motor
+case, from a trained rather than hand-designed network; nothing here is a claim
+about recorded data, and the next step is public grid-cell and motor cortex
+datasets. Several limitations are intrinsic. Rate remapping, in which firing
+rates change while fields stay put, is a change in $f$ and not in $T_c$, and is
+outside \eqref{eq:gnd} by construction, as is global remapping modelled as a
+permutation of cell identity, which is a gauge transformation in observation
+space. Grid rescaling is not a map on the population manifold at all. The chart
+dependence of GRE is a real weakness wherever the ground-truth coordinate is not
+affine in the latent. And the linear gauge assumes a global transformation; local
+deformations would need a position-dependent connection, of which the flow gauge
+is only a first step. Whether real neural systems maintain gauge structure of
+this kind is an empirical question, and we have tried to formulate it so that it
+can be answered rather than assumed.
+
+\label{endofbody}
+\clearpage
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\clearpage
+\appendix
+\input{appendix}
+
+\end{document}

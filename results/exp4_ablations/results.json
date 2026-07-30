@@ -1,0 +1,1642 @@
+{
+  "args": {
+    "device": "cpu",
+    "epochs": 40,
+    "n_cells": 50,
+    "n_latent": 6,
+    "n_samples": 800,
+    "noise": 0.15,
+    "only": null,
+    "out": "/Users/sunkalp/gnd/results/exp4_ablations",
+    "quick": true,
+    "seeds": [
+      0
+    ]
+  },
+  "rows": [
+    {
+      "abelianness": 0.5451376626876608,
+      "ablation": "full",
+      "algebra_recovery_r2": null,
+      "alignment_error": 0.15086731527801223,
+      "betti_correct": 0.0,
+      "betti_learned_str": "[2, 1]",
+      "between_sample_var": 5.127803292432006,
+      "cis": 0.977745584742757,
+      "closure_defect": 0.9152760090150734,
+      "composition_error": 0.10993152387701903,
+      "context_decoding_acc": 0.3338026714726892,
+      "context_leakage": 0.16725333934065242,
+      "continuity": 0.9938351581508515,
+      "cross_context_bottleneck": 0.08768879771232604,
+      "final_loss": 0.6785468459129333,
+      "fit_seconds": 6.657229900360107,
+      "gcs": 0.890068476122981,
+      "gre": 0.5180895707340669,
+      "gre::B: cue rotated 60deg": 0.20031283339920278,
+      "gre::C: rotated -40deg + shift": 0.374062333326081,
+      "gre::D: stretched + sheared": 0.9786457958229497,
+      "gre::E: non-affine morph": 0.5193373203880339,
+      "gre_nonlinear_chart": 0.3756077851155178,
+      "ground_truth_bottleneck": 0.12721846252679825,
+      "holonomy": 0.11423572923878231,
+      "holonomy_max": 0.25393599532387284,
+      "induced_recovery_error": 0.8699151559865438,
+      "knn_overlap": 0.8433333333333334,
+      "method": "full",
+      "mps": 0.887139479385724,
+      "mps_cross_context": 0.9193806188895604,
+      "n_latent": 6,
+      "n_parameters": 173462,
+      "readout_r2": 0.9800076681412212,
+      "readout_r2_nonlinear": 0.9969702567890392,
+      "recon_r2": 0.6946713251418704,
+      "recon_r2_native": 0.6973837373455842,
+      "seed": 0,
+      "spectral_error": 0.5825973548368654,
+      "transform_magnitude": 0.4558744133984156,
+      "transport_r2": 0.5861962626564651,
+      "transport_r2_ctx1": 0.6605882457099561,
+      "transport_r2_ctx2": 0.6139865642829668,
+      "transport_r2_ctx3": 0.5384339027342356,
+      "transport_r2_ctx4": 0.5317763378987016,
+      "transport_r2_native": 0.6270153673892356,
+      "trustworthiness": 0.9940358880778589,
+      "within_context_var": 0.11671365803844173
+    },
+    {
+      "abelianness": 0.0,
+      "ablation": "A1: no gauge",
+      "algebra_recovery_r2": null,
+      "alignment_error": 0.2535382950975972,
+      "betti_correct": 0.0,
+      "betti_learned_str": "[3, 2]",
+      "between_sample_var": 5.911992734976752,
+      "cfg_gauge": "none",
+      "cfg_w_closure": 0.0,
+      "cfg_w_group": 0.0,
+      "cis": 0.939600888496454,
+      "closure_defect": 0.0,
+      "composition_error": 0.0,
+      "context_decoding_acc": 0.29373996789727125,
+      "context_leakage": 0.11717495987144258,
+      "continuity": 0.8051490267639902,
+      "cross_context_bottleneck": 0.07789206057786942,
+      "final_loss": 1.4425554275512695,
+      "fit_seconds": 4.27543306350708,
+      "gcs": 1.0,
+      "gre": 1.2783117409428901,
+      "gre::B: cue rotated 60deg": 0.9944078235588273,
+      "gre::C: rotated -40deg + shift": 1.087613463523939,
+      "gre::D: stretched + sheared": 1.948507628607299,
+      "gre::E: non-affine morph": 1.0827180480814953,
+      "gre_nonlinear_chart": 1.0978724368170014,
+      "ground_truth_bottleneck": 0.14001600742340087,
+      "holonomy": 0.0,
+      "holonomy_max": 0.0,
+      "induced_recovery_error": 0.9999999999983588,
+      "knn_overlap": 0.3983333333333334,
+      "method": "A1: no gauge",
+      "mps": 0.8771806654365695,
+      "mps_cross_context": 0.9277366784424493,
+      "n_latent": 6,
+      "n_parameters": 172473,
+      "readout_r2": 0.8115577769423369,
+      "readout_r2_nonlinear": 0.9453090165447667,
+      "recon_r2": 0.5728077306397921,
+      "recon_r2_native": 0.5333744799204438,
+      "seed": 0,
+      "spectral_error": 0.6097560975603682,
+      "transform_magnitude": 0.0,
+      "transport_r2": 0.011794577354167418,
+      "transport_r2_ctx1": -0.39647411333827476,
+      "transport_r2_ctx2": -0.014934189365954698,
+      "transport_r2_ctx3": 0.37518042707185073,
+      "transport_r2_ctx4": 0.0834061850490484,
+      "transport_r2_native": 0.1237572127363766,
+      "trustworthiness": 0.8298175182481752,
+      "within_context_var": 0.38003274877535687
+    },
+    {
+      "abelianness": 0.5453509316947507,
+      "ablation": "A2: no group loss",
+      "algebra_recovery_r2": null,
+      "alignment_error": 0.15042345845223237,
+      "betti_correct": 0.0,
+      "betti_learned_str": "[2, 1]",
+      "between_sample_var": 4.958819743041094,
+      "cfg_w_closure": 0.0,
+      "cfg_w_group": 0.0,
+      "cis": 0.977873445494062,
+      "closure_defect": 0.9236560992766127,
+      "composition_error": 0.12066341761246169,
+      "context_decoding_acc": 0.332549538640609,
+      "context_leakage": 0.1656869233005541,
+      "continuity": 0.9942244525547446,
+      "cross_context_bottleneck": 0.08075831234455108,
+      "final_loss": 0.6705238024393717,
+      "fit_seconds": 6.445425271987915,
+      "gcs": 0.8793365823875383,
+      "gre": 0.504141393000094,
+      "gre::B: cue rotated 60deg": 0.18865760791963893,
+      "gre::C: rotated -40deg + shift": 0.36769471808069615,
+      "gre::D: stretched + sheared": 0.9520064245985376,
+      "gre::E: non-affine morph": 0.5082068214015033,
+      "gre_nonlinear_chart": 0.38652602110334106,
+      "ground_truth_bottleneck": 0.11642373204231263,
+      "holonomy": 0.13039743662969122,
+      "holonomy_max": 0.28628263477808047,
+      "induced_recovery_error": 0.8583426242349035,
+      "knn_overlap": 0.8495833333333334,
+      "method": "A2: no group loss",
+      "mps": 0.8957172543893036,
+      "mps_cross_context": 0.9252762514781335,
+      "n_latent": 6,
+      "n_parameters": 173462,
+      "readout_r2": 0.9822047141921728,
+      "readout_r2_nonlinear": 0.997030778088372,
+      "recon_r2": 0.6959424883892427,
+      "recon_r2_native": 0.698520636508743,
+      "seed": 0,
+      "spectral_error": 0.5607993632041222,
+      "transform_magnitude": 0.46290852171643526,
+      "transport_r2": 0.5905174572045434,
+      "transport_r2_ctx1": 0.6618102948062616,
+      "transport_r2_ctx2": 0.6169655505303957,
+      "transport_r2_ctx3": 0.5470998379739632,
+      "transport_r2_ctx4": 0.5361941455075532,
+      "transport_r2_native": 0.6305389825121186,
+      "trustworthiness": 0.9944555961070559,
+      "within_context_var": 0.11220428965949285
+    },
+    {
+      "abelianness": 0.5445855399762968,
+      "ablation": "A2a: no closure only",
+      "algebra_recovery_r2": null,
+      "alignment_error": 0.15085886027445525,
+      "betti_correct": 0.0,
+      "betti_learned_str": "[2, 1]",
+      "between_sample_var": 5.091168085699573,
+      "cfg_w_closure": 0.0,
+      "cis": 0.977748023561885,
+      "closure_defect": 0.924151910921786,
+      "composition_error": 0.10992840825817077,
+      "context_decoding_acc": 0.3338026714726892,
+      "context_leakage": 0.16725333934065242,
+      "continuity": 0.9938594890510949,
+      "cross_context_bottleneck": 0.08706724643707275,
+      "final_loss": 0.6780662536621094,
+      "fit_seconds": 6.306565046310425,
+      "gcs": 0.8900715917418293,
+      "gre": 0.5180620553353954,
+      "gre::B: cue rotated 60deg": 0.19856231560076487,
+      "gre::C: rotated -40deg + shift": 0.3729649479204666,
+      "gre::D: stretched + sheared": 0.9807366518336551,
+      "gre::E: non-affine morph": 0.5199843059866949,
+      "gre_nonlinear_chart": 0.37558249670234894,
+      "ground_truth_bottleneck": 0.12658479660749436,
+      "holonomy": 0.11452961007723084,
+      "holonomy_max": 0.2538326742017135,
+      "induced_recovery_error": 0.8628488592804292,
+      "knn_overlap": 0.8429166666666668,
+      "method": "A2a: no closure only",
+      "mps": 0.8876384653967624,
+      "mps_cross_context": 0.919906292161372,
+      "n_latent": 6,
+      "n_parameters": 173462,
+      "readout_r2": 0.9800611178172957,
+      "readout_r2_nonlinear": 0.9969781568565234,
+      "recon_r2": 0.694636550365942,
+      "recon_r2_native": 0.6975456484348426,
+      "seed": 0,
+      "spectral_error": 0.5808404888992652,
+      "transform_magnitude": 0.45656562773885734,
+      "transport_r2": 0.5868071674260408,
+      "transport_r2_ctx1": 0.6614489292657231,
+      "transport_r2_ctx2": 0.6144292199628836,
+      "transport_r2_ctx3": 0.5387573802974044,
+      "transport_r2_ctx4": 0.5325931401781521,
+      "transport_r2_native": 0.6272429503641792,
+      "trustworthiness": 0.9940358880778589,
+      "within_context_var": 0.11586681798832807
+    },
+    {
+      "abelianness": 0.5465482782841222,
+      "ablation": "A3: no topology",
+      "algebra_recovery_r2": null,
+      "alignment_error": 0.15530354154141568,
+      "betti_correct": 0.0,
+      "betti_learned_str": "[2, 1]",
+      "between_sample_var": 4.877751614680027,
+      "cfg_w_topology": 0.0,
+      "cis": 0.9764488447724846,
+      "closure_defect": 0.9145405567092826,
+      "composition_error": 0.0985123528450329,
+      "context_decoding_acc": 0.30124937812696534,
+      "context_leakage": 0.12656172265854845,
+      "continuity": 0.9937226277372263,
+      "cross_context_bottleneck": 0.06864579170942306,
+      "final_loss": 0.6751405199368795,
+      "fit_seconds": 6.078230857849121,
+      "gcs": 0.9014876471549671,
+      "gre": 0.5357088611412257,
+      "gre::B: cue rotated 60deg": 0.25826249324960315,
+      "gre::C: rotated -40deg + shift": 0.3164921637631586,
+      "gre::D: stretched + sheared": 0.9089584948030011,
+      "gre::E: non-affine morph": 0.6591222927491399,
+      "gre_nonlinear_chart": 0.3710372200854212,
+      "ground_truth_bottleneck": 0.15517530739307403,
+      "holonomy": 0.11316370962544724,
+      "holonomy_max": 0.2817932056241521,
+      "induced_recovery_error": 0.8732135987042708,
+      "knn_overlap": 0.8420833333333334,
+      "method": "A3: no topology",
+      "mps": 0.8656694733691428,
+      "mps_cross_context": 0.9357637561089198,
+      "n_latent": 6,
+      "n_parameters": 173462,
+      "readout_r2": 0.969396145084776,
+      "readout_r2_nonlinear": 0.9967958035738,
+      "recon_r2": 0.6827904338517704,
+      "recon_r2_native": 0.6952528377908671,
+      "seed": 0,
+      "spectral_error": 0.6071282458390276,
+      "transform_magnitude": 0.454696607514264,
+      "transport_r2": 0.5883205768756643,
+      "transport_r2_ctx1": 0.6590829100345696,
+      "transport_r2_ctx2": 0.6099184156878112,
+      "transport_r2_ctx3": 0.5461172006578916,
+      "transport_r2_ctx4": 0.5381637811223847,
+      "transport_r2_native": 0.6317137587519854,
+      "trustworthiness": 0.993220802919708,
+      "within_context_var": 0.11764741804204086
+    }
+  ],
+  "table": {
+    "A1: no gauge": {
+      "_n_seeds": 1,
+      "abelianness": {
+        "mean": 0.0,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.0
+        ]
+      },
+      "alignment_error": {
+        "mean": 0.2535382950975972,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.2535382950975972
+        ]
+      },
+      "betti_correct": {
+        "mean": 0.0,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.0
+        ]
+      },
+      "cis": {
+        "mean": 0.939600888496454,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.939600888496454
+        ]
+      },
+      "closure_defect": {
+        "mean": 0.0,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.0
+        ]
+      },
+      "composition_error": {
+        "mean": 0.0,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.0
+        ]
+      },
+      "context_decoding_acc": {
+        "mean": 0.29373996789727125,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.29373996789727125
+        ]
+      },
+      "context_leakage": {
+        "mean": 0.11717495987144258,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.11717495987144258
+        ]
+      },
+      "continuity": {
+        "mean": 0.8051490267639902,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.8051490267639902
+        ]
+      },
+      "cross_context_bottleneck": {
+        "mean": 0.07789206057786942,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.07789206057786942
+        ]
+      },
+      "fit_seconds": {
+        "mean": 4.27543306350708,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          4.27543306350708
+        ]
+      },
+      "gcs": {
+        "mean": 1.0,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          1.0
+        ]
+      },
+      "gre": {
+        "mean": 1.2783117409428901,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          1.2783117409428901
+        ]
+      },
+      "gre_nonlinear_chart": {
+        "mean": 1.0978724368170014,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          1.0978724368170014
+        ]
+      },
+      "ground_truth_bottleneck": {
+        "mean": 0.14001600742340087,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.14001600742340087
+        ]
+      },
+      "holonomy": {
+        "mean": 0.0,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.0
+        ]
+      },
+      "induced_recovery_error": {
+        "mean": 0.9999999999983588,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.9999999999983588
+        ]
+      },
+      "knn_overlap": {
+        "mean": 0.3983333333333334,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.3983333333333334
+        ]
+      },
+      "mps": {
+        "mean": 0.8771806654365695,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.8771806654365695
+        ]
+      },
+      "mps_cross_context": {
+        "mean": 0.9277366784424493,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.9277366784424493
+        ]
+      },
+      "n_parameters": {
+        "mean": 172473.0,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          172473.0
+        ]
+      },
+      "readout_r2": {
+        "mean": 0.8115577769423369,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.8115577769423369
+        ]
+      },
+      "readout_r2_nonlinear": {
+        "mean": 0.9453090165447667,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.9453090165447667
+        ]
+      },
+      "recon_r2": {
+        "mean": 0.5728077306397921,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.5728077306397921
+        ]
+      },
+      "recon_r2_native": {
+        "mean": 0.5333744799204438,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.5333744799204438
+        ]
+      },
+      "spectral_error": {
+        "mean": 0.6097560975603682,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.6097560975603682
+        ]
+      },
+      "transform_magnitude": {
+        "mean": 0.0,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.0
+        ]
+      },
+      "transport_r2": {
+        "mean": 0.011794577354167418,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.011794577354167418
+        ]
+      },
+      "transport_r2_native": {
+        "mean": 0.1237572127363766,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.1237572127363766
+        ]
+      },
+      "trustworthiness": {
+        "mean": 0.8298175182481752,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.8298175182481752
+        ]
+      }
+    },
+    "A2: no group loss": {
+      "_n_seeds": 1,
+      "abelianness": {
+        "mean": 0.5453509316947507,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.5453509316947507
+        ]
+      },
+      "alignment_error": {
+        "mean": 0.15042345845223237,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.15042345845223237
+        ]
+      },
+      "betti_correct": {
+        "mean": 0.0,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.0
+        ]
+      },
+      "cis": {
+        "mean": 0.977873445494062,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.977873445494062
+        ]
+      },
+      "closure_defect": {
+        "mean": 0.9236560992766127,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.9236560992766127
+        ]
+      },
+      "composition_error": {
+        "mean": 0.12066341761246169,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.12066341761246169
+        ]
+      },
+      "context_decoding_acc": {
+        "mean": 0.332549538640609,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.332549538640609
+        ]
+      },
+      "context_leakage": {
+        "mean": 0.1656869233005541,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.1656869233005541
+        ]
+      },
+      "continuity": {
+        "mean": 0.9942244525547446,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.9942244525547446
+        ]
+      },
+      "cross_context_bottleneck": {
+        "mean": 0.08075831234455108,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.08075831234455108
+        ]
+      },
+      "fit_seconds": {
+        "mean": 6.445425271987915,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          6.445425271987915
+        ]
+      },
+      "gcs": {
+        "mean": 0.8793365823875383,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.8793365823875383
+        ]
+      },
+      "gre": {
+        "mean": 0.504141393000094,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.504141393000094
+        ]
+      },
+      "gre_nonlinear_chart": {
+        "mean": 0.38652602110334106,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.38652602110334106
+        ]
+      },
+      "ground_truth_bottleneck": {
+        "mean": 0.11642373204231263,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.11642373204231263
+        ]
+      },
+      "holonomy": {
+        "mean": 0.13039743662969122,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.13039743662969122
+        ]
+      },
+      "induced_recovery_error": {
+        "mean": 0.8583426242349035,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.8583426242349035
+        ]
+      },
+      "knn_overlap": {
+        "mean": 0.8495833333333334,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.8495833333333334
+        ]
+      },
+      "mps": {
+        "mean": 0.8957172543893036,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.8957172543893036
+        ]
+      },
+      "mps_cross_context": {
+        "mean": 0.9252762514781335,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.9252762514781335
+        ]
+      },
+      "n_parameters": {
+        "mean": 173462.0,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          173462.0
+        ]
+      },
+      "readout_r2": {
+        "mean": 0.9822047141921728,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.9822047141921728
+        ]
+      },
+      "readout_r2_nonlinear": {
+        "mean": 0.997030778088372,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.997030778088372
+        ]
+      },
+      "recon_r2": {
+        "mean": 0.6959424883892427,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.6959424883892427
+        ]
+      },
+      "recon_r2_native": {
+        "mean": 0.698520636508743,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.698520636508743
+        ]
+      },
+      "spectral_error": {
+        "mean": 0.5607993632041222,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.5607993632041222
+        ]
+      },
+      "transform_magnitude": {
+        "mean": 0.46290852171643526,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.46290852171643526
+        ]
+      },
+      "transport_r2": {
+        "mean": 0.5905174572045434,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.5905174572045434
+        ]
+      },
+      "transport_r2_native": {
+        "mean": 0.6305389825121186,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.6305389825121186
+        ]
+      },
+      "trustworthiness": {
+        "mean": 0.9944555961070559,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.9944555961070559
+        ]
+      }
+    },
+    "A2a: no closure only": {
+      "_n_seeds": 1,
+      "abelianness": {
+        "mean": 0.5445855399762968,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.5445855399762968
+        ]
+      },
+      "alignment_error": {
+        "mean": 0.15085886027445525,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.15085886027445525
+        ]
+      },
+      "betti_correct": {
+        "mean": 0.0,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.0
+        ]
+      },
+      "cis": {
+        "mean": 0.977748023561885,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.977748023561885
+        ]
+      },
+      "closure_defect": {
+        "mean": 0.924151910921786,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.924151910921786
+        ]
+      },
+      "composition_error": {
+        "mean": 0.10992840825817077,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.10992840825817077
+        ]
+      },
+      "context_decoding_acc": {
+        "mean": 0.3338026714726892,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.3338026714726892
+        ]
+      },
+      "context_leakage": {
+        "mean": 0.16725333934065242,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.16725333934065242
+        ]
+      },
+      "continuity": {
+        "mean": 0.9938594890510949,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.9938594890510949
+        ]
+      },
+      "cross_context_bottleneck": {
+        "mean": 0.08706724643707275,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.08706724643707275
+        ]
+      },
+      "fit_seconds": {
+        "mean": 6.306565046310425,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          6.306565046310425
+        ]
+      },
+      "gcs": {
+        "mean": 0.8900715917418293,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.8900715917418293
+        ]
+      },
+      "gre": {
+        "mean": 0.5180620553353954,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.5180620553353954
+        ]
+      },
+      "gre_nonlinear_chart": {
+        "mean": 0.37558249670234894,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.37558249670234894
+        ]
+      },
+      "ground_truth_bottleneck": {
+        "mean": 0.12658479660749436,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.12658479660749436
+        ]
+      },
+      "holonomy": {
+        "mean": 0.11452961007723084,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.11452961007723084
+        ]
+      },
+      "induced_recovery_error": {
+        "mean": 0.8628488592804292,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.8628488592804292
+        ]
+      },
+      "knn_overlap": {
+        "mean": 0.8429166666666668,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.8429166666666668
+        ]
+      },
+      "mps": {
+        "mean": 0.8876384653967624,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.8876384653967624
+        ]
+      },
+      "mps_cross_context": {
+        "mean": 0.919906292161372,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.919906292161372
+        ]
+      },
+      "n_parameters": {
+        "mean": 173462.0,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          173462.0
+        ]
+      },
+      "readout_r2": {
+        "mean": 0.9800611178172957,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.9800611178172957
+        ]
+      },
+      "readout_r2_nonlinear": {
+        "mean": 0.9969781568565234,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.9969781568565234
+        ]
+      },
+      "recon_r2": {
+        "mean": 0.694636550365942,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.694636550365942
+        ]
+      },
+      "recon_r2_native": {
+        "mean": 0.6975456484348426,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.6975456484348426
+        ]
+      },
+      "spectral_error": {
+        "mean": 0.5808404888992652,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.5808404888992652
+        ]
+      },
+      "transform_magnitude": {
+        "mean": 0.45656562773885734,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.45656562773885734
+        ]
+      },
+      "transport_r2": {
+        "mean": 0.5868071674260408,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.5868071674260408
+        ]
+      },
+      "transport_r2_native": {
+        "mean": 0.6272429503641792,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.6272429503641792
+        ]
+      },
+      "trustworthiness": {
+        "mean": 0.9940358880778589,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.9940358880778589
+        ]
+      }
+    },
+    "A3: no topology": {
+      "_n_seeds": 1,
+      "abelianness": {
+        "mean": 0.5465482782841222,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.5465482782841222
+        ]
+      },
+      "alignment_error": {
+        "mean": 0.15530354154141568,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.15530354154141568
+        ]
+      },
+      "betti_correct": {
+        "mean": 0.0,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.0
+        ]
+      },
+      "cis": {
+        "mean": 0.9764488447724846,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.9764488447724846
+        ]
+      },
+      "closure_defect": {
+        "mean": 0.9145405567092826,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.9145405567092826
+        ]
+      },
+      "composition_error": {
+        "mean": 0.0985123528450329,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.0985123528450329
+        ]
+      },
+      "context_decoding_acc": {
+        "mean": 0.30124937812696534,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.30124937812696534
+        ]
+      },
+      "context_leakage": {
+        "mean": 0.12656172265854845,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.12656172265854845
+        ]
+      },
+      "continuity": {
+        "mean": 0.9937226277372263,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.9937226277372263
+        ]
+      },
+      "cross_context_bottleneck": {
+        "mean": 0.06864579170942306,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.06864579170942306
+        ]
+      },
+      "fit_seconds": {
+        "mean": 6.078230857849121,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          6.078230857849121
+        ]
+      },
+      "gcs": {
+        "mean": 0.9014876471549671,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.9014876471549671
+        ]
+      },
+      "gre": {
+        "mean": 0.5357088611412257,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.5357088611412257
+        ]
+      },
+      "gre_nonlinear_chart": {
+        "mean": 0.3710372200854212,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.3710372200854212
+        ]
+      },
+      "ground_truth_bottleneck": {
+        "mean": 0.15517530739307403,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.15517530739307403
+        ]
+      },
+      "holonomy": {
+        "mean": 0.11316370962544724,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.11316370962544724
+        ]
+      },
+      "induced_recovery_error": {
+        "mean": 0.8732135987042708,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.8732135987042708
+        ]
+      },
+      "knn_overlap": {
+        "mean": 0.8420833333333334,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.8420833333333334
+        ]
+      },
+      "mps": {
+        "mean": 0.8656694733691428,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.8656694733691428
+        ]
+      },
+      "mps_cross_context": {
+        "mean": 0.9357637561089198,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.9357637561089198
+        ]
+      },
+      "n_parameters": {
+        "mean": 173462.0,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          173462.0
+        ]
+      },
+      "readout_r2": {
+        "mean": 0.969396145084776,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.969396145084776
+        ]
+      },
+      "readout_r2_nonlinear": {
+        "mean": 0.9967958035738,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.9967958035738
+        ]
+      },
+      "recon_r2": {
+        "mean": 0.6827904338517704,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.6827904338517704
+        ]
+      },
+      "recon_r2_native": {
+        "mean": 0.6952528377908671,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.6952528377908671
+        ]
+      },
+      "spectral_error": {
+        "mean": 0.6071282458390276,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.6071282458390276
+        ]
+      },
+      "transform_magnitude": {
+        "mean": 0.454696607514264,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.454696607514264
+        ]
+      },
+      "transport_r2": {
+        "mean": 0.5883205768756643,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.5883205768756643
+        ]
+      },
+      "transport_r2_native": {
+        "mean": 0.6317137587519854,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.6317137587519854
+        ]
+      },
+      "trustworthiness": {
+        "mean": 0.993220802919708,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.993220802919708
+        ]
+      }
+    },
+    "full": {
+      "_n_seeds": 1,
+      "abelianness": {
+        "mean": 0.5451376626876608,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.5451376626876608
+        ]
+      },
+      "alignment_error": {
+        "mean": 0.15086731527801223,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.15086731527801223
+        ]
+      },
+      "betti_correct": {
+        "mean": 0.0,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.0
+        ]
+      },
+      "cis": {
+        "mean": 0.977745584742757,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.977745584742757
+        ]
+      },
+      "closure_defect": {
+        "mean": 0.9152760090150734,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.9152760090150734
+        ]
+      },
+      "composition_error": {
+        "mean": 0.10993152387701903,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.10993152387701903
+        ]
+      },
+      "context_decoding_acc": {
+        "mean": 0.3338026714726892,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.3338026714726892
+        ]
+      },
+      "context_leakage": {
+        "mean": 0.16725333934065242,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.16725333934065242
+        ]
+      },
+      "continuity": {
+        "mean": 0.9938351581508515,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.9938351581508515
+        ]
+      },
+      "cross_context_bottleneck": {
+        "mean": 0.08768879771232604,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.08768879771232604
+        ]
+      },
+      "fit_seconds": {
+        "mean": 6.657229900360107,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          6.657229900360107
+        ]
+      },
+      "gcs": {
+        "mean": 0.890068476122981,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.890068476122981
+        ]
+      },
+      "gre": {
+        "mean": 0.5180895707340669,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.5180895707340669
+        ]
+      },
+      "gre_nonlinear_chart": {
+        "mean": 0.3756077851155178,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.3756077851155178
+        ]
+      },
+      "ground_truth_bottleneck": {
+        "mean": 0.12721846252679825,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.12721846252679825
+        ]
+      },
+      "holonomy": {
+        "mean": 0.11423572923878231,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.11423572923878231
+        ]
+      },
+      "induced_recovery_error": {
+        "mean": 0.8699151559865438,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.8699151559865438
+        ]
+      },
+      "knn_overlap": {
+        "mean": 0.8433333333333334,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.8433333333333334
+        ]
+      },
+      "mps": {
+        "mean": 0.887139479385724,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.887139479385724
+        ]
+      },
+      "mps_cross_context": {
+        "mean": 0.9193806188895604,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.9193806188895604
+        ]
+      },
+      "n_parameters": {
+        "mean": 173462.0,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          173462.0
+        ]
+      },
+      "readout_r2": {
+        "mean": 0.9800076681412212,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.9800076681412212
+        ]
+      },
+      "readout_r2_nonlinear": {
+        "mean": 0.9969702567890392,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.9969702567890392
+        ]
+      },
+      "recon_r2": {
+        "mean": 0.6946713251418704,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.6946713251418704
+        ]
+      },
+      "recon_r2_native": {
+        "mean": 0.6973837373455842,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.6973837373455842
+        ]
+      },
+      "spectral_error": {
+        "mean": 0.5825973548368654,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.5825973548368654
+        ]
+      },
+      "transform_magnitude": {
+        "mean": 0.4558744133984156,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.4558744133984156
+        ]
+      },
+      "transport_r2": {
+        "mean": 0.5861962626564651,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.5861962626564651
+        ]
+      },
+      "transport_r2_native": {
+        "mean": 0.6270153673892356,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.6270153673892356
+        ]
+      },
+      "trustworthiness": {
+        "mean": 0.9940358880778589,
+        "n": 1,
+        "sem": 0.0,
+        "std": 0.0,
+        "values": [
+          0.9940358880778589
+        ]
+      }
+    }
+  }
+}

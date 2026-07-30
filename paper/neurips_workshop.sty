@@ -1,0 +1,135 @@
+% neurips_workshop.sty
+%
+% An independent reimplementation of the NeurIPS paper layout, for use when the
+% official style file for a given year is not available locally.  It reproduces
+% the published NeurIPS format specification -- letter paper, a 5.5in x 9in text
+% block, 10pt Times body, 17pt bold centred title, the indented abstract, 12pt
+% bold numbered section heads, small captions and references -- so that page
+% counts and visual appearance match.  It is NOT the official file: when the
+% official neurips_<year>.sty for the target venue is available, replace this
+% file with it and change the \usepackage line in main.tex.  No further edits to
+% main.tex should be needed.
+%
+% Options:
+%   preprint    -- author names shown, no line numbers  (default here)
+%   final       -- author names shown, no line numbers
+%   review      -- anonymised, line numbers on
+%
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{neurips_workshop}[2026/01/01 NeurIPS-compatible layout]
+
+\newif\if@nipsreview\@nipsreviewfalse
+\newif\if@nipspreprint\@nipspreprinttrue
+\DeclareOption{review}{\@nipsreviewtrue\@nipspreprintfalse}
+\DeclareOption{preprint}{\@nipsreviewfalse\@nipspreprinttrue}
+\DeclareOption{final}{\@nipsreviewfalse\@nipspreprintfalse}
+\ProcessOptions\relax
+
+\RequirePackage{geometry}
+\RequirePackage{mathptmx}          % Times for text and math
+\RequirePackage{amsmath}
+\RequirePackage{caption}
+\RequirePackage{ifthen}
+\if@nipsreview
+  \RequirePackage[switch]{lineno}
+  \AtBeginDocument{\linenumbers}
+  \renewcommand\linenumberfont{\normalfont\tiny\sffamily\color{gray}}
+\fi
+
+% ---------------------------------------------------------------- page layout
+\geometry{
+  letterpaper,
+  textwidth=5.5in,
+  textheight=9.0in,
+  top=1.0in,
+  left=1.5in,
+  headheight=0.2in,
+  headsep=0.25in,
+  footskip=0.3in,
+}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4.2pt plus 1pt minus 1pt}
+\renewcommand{\baselinestretch}{1.0}
+\pagestyle{plain}
+
+% ------------------------------------------------------------------ body font
+\renewcommand{\normalsize}{\@setfontsize\normalsize{10}{12}}
+\renewcommand{\small}{\@setfontsize\small{9}{10.5}}
+\renewcommand{\footnotesize}{\@setfontsize\footnotesize{9}{10.5}}
+\renewcommand{\scriptsize}{\@setfontsize\scriptsize{7}{8}}
+\renewcommand{\tiny}{\@setfontsize\tiny{6}{7}}
+\renewcommand{\large}{\@setfontsize\large{12}{14}}
+\renewcommand{\Large}{\@setfontsize\Large{14}{16}}
+\renewcommand{\LARGE}{\@setfontsize\LARGE{17}{20}}
+\normalsize
+
+% -------------------------------------------------------------------- headings
+\renewcommand{\section}{\@startsection{section}{1}{\z@}%
+  {-1.6ex \@plus -0.5ex \@minus -0.2ex}%
+  {0.9ex \@plus 0.2ex}%
+  {\normalfont\large\bfseries\raggedright}}
+\renewcommand{\subsection}{\@startsection{subsection}{2}{\z@}%
+  {-1.3ex \@plus -0.4ex \@minus -0.2ex}%
+  {0.7ex \@plus 0.2ex}%
+  {\normalfont\normalsize\bfseries\raggedright}}
+\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{\z@}%
+  {-1.1ex \@plus -0.3ex \@minus -0.2ex}%
+  {0.5ex \@plus 0.1ex}%
+  {\normalfont\normalsize\bfseries\raggedright}}
+\renewcommand{\paragraph}{\@startsection{paragraph}{4}{\z@}%
+  {1.2ex \@plus 0.3ex \@minus 0.2ex}%
+  {-1em}%
+  {\normalfont\normalsize\bfseries}}
+\setcounter{secnumdepth}{3}
+
+% ----------------------------------------------------------------------- title
+\renewcommand{\@maketitle}{%
+  \vbox{%
+    \hsize\textwidth
+    \linewidth\hsize
+    \vskip 0.1in
+    \centering
+    {\LARGE\bfseries \@title\par}
+    \vskip 0.25in
+    {\large \@author\par}
+    \vskip 0.20in
+  }%
+}
+\def\maketitle{\par\begingroup\@maketitle\endgroup\thispagestyle{plain}\@thanks
+  \setcounter{footnote}{0}}
+
+\providecommand{\And}{}\renewcommand{\And}{\hspace{1.5em}}
+\providecommand{\AND}{}\renewcommand{\AND}{\\[0.4em]}
+
+% -------------------------------------------------------------------- abstract
+\renewenvironment{abstract}{%
+  \vskip 0.075in
+  \centerline{\large\bfseries Abstract}%
+  \vspace{0.5ex}%
+  \begin{quote}
+}{%
+  \end{quote}
+  \vskip 0.10in
+}
+
+% -------------------------------------------------------------------- captions
+\captionsetup{font=small,labelfont=bf,skip=5pt,width=\textwidth}
+
+% ------------------------------------------------------------------ references
+\renewcommand{\refname}{References}
+\let\@nips@thebibliography\thebibliography
+\renewcommand{\thebibliography}[1]{\small\@nips@thebibliography{#1}%
+  \setlength{\itemsep}{0.6ex}\setlength{\parskip}{0pt}}
+
+% ---------------------------------------------------------------- misc tweaks
+\setlength{\floatsep}{7pt plus 2pt minus 2pt}
+\setlength{\textfloatsep}{8pt plus 2pt minus 3pt}
+\setlength{\intextsep}{8pt plus 2pt minus 2pt}
+\setlength{\abovecaptionskip}{5pt}
+\setlength{\belowcaptionskip}{2pt}
+\renewcommand{\topfraction}{0.92}
+\renewcommand{\bottomfraction}{0.85}
+\renewcommand{\textfraction}{0.06}
+\renewcommand{\floatpagefraction}{0.80}
+
+\endinput
