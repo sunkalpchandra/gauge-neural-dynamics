@@ -465,18 +465,35 @@ A single grid module's activity depends on position only through a pair of
 phases, so its manifold is a torus \citep{gardner2022toroidal}. Embedding the
 phase pair as $(\cos\theta_1,\sin\theta_1,\cos\theta_2,\sin\theta_2)/\sqrt2$
 turns a phase translation into a pair of independent plane rotations, an element
-of the maximal torus of $SO(4)$. Three predictions follow: the learned algebra
-should be abelian, composition should be exact already at BCH order one, and the
-canonical latent should have Betti numbers $(1,2,1)$.
+of the maximal torus of $SO(4)$. Three predictions follow: the group the contexts
+realise should be abelian, composition should be near exact, and the canonical
+latent should have Betti numbers $(1,2,1)$. Since a torus is not preserved by a
+general linear map we restrict the gauge to isometries.
 
-Since a torus is not preserved by a general linear map, we restrict the gauge
-group to isometries; this is a geometric requirement rather than a convenience,
-and the unrestricted variant is worse (GRE \gridGLgre{} against \gridGNDgre,
-Table~\ref{tab:grid}, Appendix~\ref{app:extra}). The predictions hold. The generators nearly commute, with
-mean commutator norm \gridGNDabelian{} for unit-normalised generators, and GCS is
-\gridGNDgcs. The canonical latent is a torus (Fig.~\ref{fig:grid}c,d) that
-factorises into two circles carrying the two phases (Fig.~\ref{fig:grid}e,f), and
-Betti numbers $(1,2,1)$ are recovered in \gridGNDbetti{} of runs.
+All three hold. Composition is essentially exact, GCS \gridGNDgcs, the highest
+of the three experiments and what one should expect for the simplest of the three
+groups. The realised algebra very nearly commutes, \gridRealisedAbelian{}
+against \hipRealisedAbelian{} for the place-cell contexts, whose true group
+contains rotations and shears and is genuinely non-abelian. The distinction
+matters: the commutator of the learned \emph{basis} is \gridGNDabelian, which would
+read as a failed prediction, but the basis spans six directions while the
+contexts exercise a two-dimensional subgroup, and nothing in the objective asks
+the unused directions to commute. And the canonical latent is a torus
+(Fig.~\ref{fig:grid}c,d) that factorises into two circles carrying the two phases
+(Fig.~\ref{fig:grid}e,f), with Betti numbers $(1,2,1)$ recovered in
+\gridGNDbetti{} of runs.
+
+Recovery is the one place a linear baseline is hard to beat, and the reason is
+worth stating. PCA reaches GRE \gridPCAgre{} against our \gridGNDgre, because
+for a single module the leading principal components of the population \emph{are}
+the Fourier modes $\cos\theta$ and $\sin\theta$ that constitute the torus
+embedding; PCA lands on nearly the right chart without being asked to. What it
+does not recover is the group: its GCS is \gridPCAgcs{} against our
+\gridGNDgcs, and it finds the toroidal homology in \gridPCAbetti{} of runs
+against our \gridGNDbetti. The isometric restriction is likewise a trade rather
+than a free win: it gives a cleaner group than the unrestricted variant (GCS
+\gridGNDgcs{} against \gridGLgcs) at some cost in chart quality (GRE
+\gridGNDgre{} against \gridGLgre).
 
 Two further families probe the boundaries (Table~\ref{tab:grid-families}). Adding
 the $60^\circ$ lattice automorphism, an integer matrix and hence a genuine torus

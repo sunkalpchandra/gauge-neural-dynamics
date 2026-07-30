@@ -324,6 +324,12 @@ def do_exp2(macros: dict) -> None:
         "gridGNDgcs": fmt(val(main, "GND", "gcs"), sem(main, "GND", "gcs")),
         "gridGNDabelian": fmt(val(main, "GND", "abelianness"), sem(main, "GND", "abelianness")),
         "gridRealisedAbelian": artefact_realised_abelianness("exp2_grid_cells"),
+        "gridGLgcs": fmt(val(main, "GND-gl", "gcs"), sem(main, "GND-gl", "gcs")),
+        "gridPCAgre": fmt(val(main, "PCA", "gre"), sem(main, "PCA", "gre")),
+        "gridPCAgcs": fmt(val(main, "PCA", "gcs"), sem(main, "PCA", "gcs")),
+        "gridPCAbetti": (f"{val(main, 'PCA', 'betti_correct'):.0%}".replace("%", r"\%")
+                         if np.isfinite(val(main, "PCA", "betti_correct")) else "--"),
+        "gridGNDcisMain": fmt(val(main, "GND", "cis"), sem(main, "GND", "cis")),
         "gridGNDgre": fmt(val(main, "GND", "gre"), sem(main, "GND", "gre")),
         "gridGNDcis": fmt(val(main, "GND", "cis"), sem(main, "GND", "cis")),
         "gridGNDtransport": fmt(val(main, "GND", "transport_r2"), sem(main, "GND", "transport_r2")),
