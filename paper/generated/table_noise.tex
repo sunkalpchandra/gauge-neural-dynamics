@@ -1,0 +1,17 @@
+\begin{table}[t]
+\centering
+\caption{\textbf{Noise robustness.} Cross-context transport $R^2$ as observation noise grows, in units of the activity standard deviation. The Poisson row draws spike counts instead of adding Gaussian noise. Mean $\pm$ s.e.m.\ over 3 seeds.}
+\label{tab:noise}
+\vspace{2pt}
+\small
+\begin{tabular}{lccccccc}
+\toprule
+Method & $0$ & $0.05$ & $0.1$ & $0.2$ & $0.4$ & $0.8$ & Poisson \\
+\midrule
+\textbf{GND} & 0.802\,\tiny{$\pm$\,0.023} & 0.772\,\tiny{$\pm$\,0.008} & 0.711\,\tiny{$\pm$\,0.005} & 0.626\,\tiny{$\pm$\,0.013} & 0.507\,\tiny{$\pm$\,0.011} & 0.327\,\tiny{$\pm$\,0.005} & 0.646\,\tiny{$\pm$\,0.005} \\
+PCA & 0.519\,\tiny{$\pm$\,0.020} & 0.499\,\tiny{$\pm$\,0.006} & 0.476\,\tiny{$\pm$\,0.002} & 0.447\,\tiny{$\pm$\,0.006} & 0.369\,\tiny{$\pm$\,0.004} & 0.250\,\tiny{$\pm$\,0.008} & 0.439\,\tiny{$\pm$\,0.001} \\
+Autoencoder & 0.434\,\tiny{$\pm$\,0.042} & 0.434\,\tiny{$\pm$\,0.018} & 0.391\,\tiny{$\pm$\,0.028} & 0.363\,\tiny{$\pm$\,0.025} & 0.299\,\tiny{$\pm$\,0.011} & 0.174\,\tiny{$\pm$\,0.010} & 0.402\,\tiny{$\pm$\,0.000} \\
+Procrustes & 0.207\,\tiny{$\pm$\,0.059} & 0.100\,\tiny{$\pm$\,0.016} & 0.140\,\tiny{$\pm$\,0.021} & 0.206\,\tiny{$\pm$\,0.034} & 0.179\,\tiny{$\pm$\,0.010} & 0.103\,\tiny{$\pm$\,0.016} & 0.169\,\tiny{$\pm$\,0.061} \\
+\bottomrule
+\end{tabular}
+\end{table}
