@@ -1,0 +1,42 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          # CPU wheels only: the gauge needs matrix_exp / linalg.lstsq, which have
+          # no GPU-specific path here, and the CI runners have no GPU anyway.
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install -r requirements.txt
+
+      - name: Fast tests
+        run: pytest tests/ -q -m "not slow" --durations=10
+
+      - name: End-to-end tests
+        run: pytest tests/ -q -m slow --durations=5
+
+      - name: Pipeline smoke test
+        run: python scripts/run_all.py --quick --stage experiments --jobs 2
+
+      - name: Figures and tables build
+        run: |
+          python -m gnd.figures.make_all || true
+          python scripts/make_tables.py

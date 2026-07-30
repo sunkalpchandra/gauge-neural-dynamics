@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+title: "Gauge Neural Dynamics: Learning Context-Dependent Coordinate Systems in Biological Neural Representations"
+message: "If you use this software or the framework, please cite it as below."
+type: software
+authors:
+  - family-names: "Chandra"
+    given-names: "Sunkalp"
+repository-code: "https://github.com/sunkalpchandra/gauge-neural-dynamics"
+license: MIT
+keywords:
+  - computational neuroscience
+  - neural manifolds
+  - Lie groups
+  - gauge theory
+  - hippocampal remapping
+  - grid cells
+  - motor cortex
+  - persistent homology
+abstract: >-
+  A framework in which context-dependent neural representations are modelled as a
+  shared latent state read out through a context-dependent gauge transformation,
+  x_c = f(T_c(z)), with T_c the exponential of a context-dependent element of a
+  learned finite-dimensional Lie algebra. Identity and exact invertibility follow
+  from the construction; closure under composition is measured rather than
+  assumed. Includes simulations of hippocampal remapping, grid-cell phase
+  translation and a trained reaching network, four metrics for context-dependent
+  geometry, and a proof that a single-chart gauge field cannot cover a cyclic
+  context variable.

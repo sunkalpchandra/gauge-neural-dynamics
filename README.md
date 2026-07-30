@@ -1,5 +1,8 @@
 # Gauge Neural Dynamics (GND)
 
+[![tests](https://github.com/sunkalpchandra/gauge-neural-dynamics/actions/workflows/tests.yml/badge.svg)](https://github.com/sunkalpchandra/gauge-neural-dynamics/actions/workflows/tests.yml)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 **Learning context-dependent coordinate systems in biological neural representations.**
 
 Neural population activity is usually summarised by fitting one low-dimensional
