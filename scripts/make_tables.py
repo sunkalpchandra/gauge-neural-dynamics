@@ -95,6 +95,24 @@ def best_of(table: dict, methods, key: str, higher_is_better: bool) -> tuple[str
     return (max if higher_is_better else min)(vals, key=lambda t: t[1])
 
 
+def artefact_realised_abelianness(exp: str) -> str:
+    """Realised abelianness from an experiment's saved first-seed artefacts.
+
+    The completed runs predate this metric, so rather than repeat several hours
+    of compute we recompute it from the stored generators and coefficients. It is
+    therefore a single-seed diagnostic and is labelled as such wherever quoted.
+    """
+    from gnd.geometry.metrics import realised_abelianness
+
+    p = RESULTS_DIR / exp / "artifacts.npz"
+    if not p.exists():
+        return "--"
+    with np.load(p, allow_pickle=False) as z:
+        if "GND::generators" not in z.files or "GND::theta" not in z.files:
+            return "--"
+        return fmt(realised_abelianness(z["GND::generators"], z["GND::theta"]), None)
+
+
 def write(name: str, body: str) -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / name).write_text(body)
@@ -201,6 +219,7 @@ def do_exp1(macros: dict) -> None:
                         sem(t, "ManifoldAlign", "transform_magnitude"), 2),
         "hipGNDmag": fmt(val(t, "GND", "transform_magnitude"),
                          sem(t, "GND", "transform_magnitude"), 2),
+        "hipRealisedAbelian": artefact_realised_abelianness("exp1_hippocampus"),
     })
     # Recovery on the deliberately non-affine morph context, where the linear
     # gauge is expected to fail and the flow gauge to do better.  Quoted
@@ -304,6 +323,7 @@ def do_exp2(macros: dict) -> None:
         "gridSeeds": str(n_seeds),
         "gridGNDgcs": fmt(val(main, "GND", "gcs"), sem(main, "GND", "gcs")),
         "gridGNDabelian": fmt(val(main, "GND", "abelianness"), sem(main, "GND", "abelianness")),
+        "gridRealisedAbelian": artefact_realised_abelianness("exp2_grid_cells"),
         "gridGNDgre": fmt(val(main, "GND", "gre"), sem(main, "GND", "gre")),
         "gridGNDcis": fmt(val(main, "GND", "cis"), sem(main, "GND", "cis")),
         "gridGNDtransport": fmt(val(main, "GND", "transport_r2"), sem(main, "GND", "transport_r2")),

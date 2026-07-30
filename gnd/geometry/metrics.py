@@ -194,6 +194,34 @@ def abelianness(G: np.ndarray) -> float:
     return float(mag[off].mean())
 
 
+def realised_abelianness(G: np.ndarray, theta: np.ndarray) -> float:
+    r"""Commutativity of the algebra elements the contexts actually realise.
+
+    :func:`abelianness` measures commutators of the *basis* ``{G_k}``, which is
+    the wrong question. The learned basis spans a ``K``-dimensional subspace
+    while the group the contexts exercise may be far smaller, and nothing in the
+    objective asks the unused directions to commute; a non-abelian basis can
+    perfectly well realise an abelian group. What matters is whether the
+    elements ``A_c = sum_k theta_k(c) G_k`` commute with each other:
+
+        \bar\eta = < ||[A_a, A_b]||_F / (||A_a||_F ||A_b||_F) >_{a<b} .
+
+    This is independent of the basis and of the scale of ``theta``, and it is the
+    quantity the grid-cell prediction is actually about.
+    """
+    G, theta = np.asarray(G, float), np.asarray(theta, float)
+    A = np.einsum("ck,kab->cab", theta, G)
+    n = np.linalg.norm(A.reshape(len(A), -1), axis=1)
+    keep = n > 1e-8                       # the reference context contributes nothing
+    A, n = A[keep], n[keep]
+    vals = []
+    for i in range(len(A)):
+        for j in range(i + 1, len(A)):
+            c = A[i] @ A[j] - A[j] @ A[i]
+            vals.append(np.linalg.norm(c) / (n[i] * n[j]))
+    return float(np.mean(vals)) if vals else 0.0
+
+
 def bch_compose(a: np.ndarray, b: np.ndarray, f: np.ndarray, order: int = 2) -> np.ndarray:
     out = a + b
     if order >= 2:
@@ -266,6 +294,10 @@ def gauge_consistency_score(
         "transform_magnitude": float(np.mean(disp) / scale),
         "closure_defect": lie_closure_defect(G) if G is not None else gauge.meta.get("closure_defect", float("nan")),
         "abelianness": abelianness(G) if G is not None else gauge.meta.get("abelianness", float("nan")),
+        # The basis measure above answers the wrong question; this one answers
+        # whether the group the contexts actually realise is abelian.
+        "realised_abelianness": (realised_abelianness(G, th) if G is not None
+                                 else float("nan")),
     }
 
 

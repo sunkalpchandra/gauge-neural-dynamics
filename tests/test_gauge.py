@@ -197,3 +197,33 @@ def test_flow_with_so_algebra_preserves_norm():
     z = torch.randn(40, 4)
     out = flow.transform(z, torch.tensor([0.4, -0.3, 0.2]).expand(40, -1))
     assert torch.allclose(out.norm(dim=1), z.norm(dim=1), atol=1e-3)
+
+
+def test_realised_abelianness_sees_what_the_basis_measure_misses():
+    """A non-commuting basis can still realise a commuting group.
+
+    Two commuting plane rotations are embedded in a basis that also contains
+    non-commuting directions the contexts never use. The basis measure is large;
+    the realised measure, which is the one the grid-cell prediction is about, is
+    zero.
+    """
+    from gnd.geometry.metrics import realised_abelianness
+
+    G = np.zeros((4, 4, 4))
+    G[0, 0, 1], G[0, 1, 0] = -1, 1            # rotation in the (1,2) plane
+    G[1, 2, 3], G[1, 3, 2] = -1, 1            # rotation in the (3,4) plane
+    G[2, 0, 2], G[2, 2, 0] = -1, 1            # unused, does not commute with the others
+    G[3, 1, 3], G[3, 3, 1] = -1, 1            # unused
+    G = G / np.linalg.norm(G[0])
+    theta = np.array([[0.0, 0.0, 0, 0], [0.7, -0.3, 0, 0], [-0.4, 1.1, 0, 0]])
+
+    assert abelianness(G) > 0.3, "the basis is genuinely non-commuting"
+    assert realised_abelianness(G, theta) < 1e-8, "but the realised group commutes"
+
+
+def test_realised_abelianness_is_large_for_a_genuinely_non_abelian_family():
+    from gnd.geometry.metrics import realised_abelianness
+
+    G = _so3_basis()
+    theta = np.array([[0.0, 0, 0], [0.9, 0.1, 0], [0.1, 0.8, 0], [0, 0.2, 0.9]])
+    assert realised_abelianness(G, theta) > 0.3
