@@ -1,4 +1,5 @@
 {
+  "_note": "stale pilot run (1 seed, 80 epochs) -- superseded when the full exp2 sweep finishes; marked incomplete so make_tables and the figure loader refuse to use it",
   "args": {
     "context_sets": [
       "translation"
@@ -16,6 +17,7 @@
       0
     ]
   },
+  "complete": false,
   "rows": [
     {
       "abelianness": 0.45086528296479467,

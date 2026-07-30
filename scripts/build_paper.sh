@@ -12,6 +12,11 @@ command -v pdflatex >/dev/null || { echo "pdflatex not found; see README for ins
 mkdir -p "$PAPER/figures"
 cp -f "$ROOT"/figures/*.pdf "$PAPER/figures/" 2>/dev/null || true
 
+cd "$ROOT"
+PY_BIN="$ROOT/.venv/bin/python"; [ -x "$PY_BIN" ] || PY_BIN=python3
+echo "== generated macros =="
+"$PY_BIN" scripts/check_macros.py || macro_fail=1
+
 cd "$PAPER"
 echo "== pdflatex (1/4) ==" ; pdflatex -interaction=nonstopmode main.tex >  build.log 2>&1
 echo "== bibtex =="         ; bibtex   main                              >> build.log 2>&1
@@ -21,7 +26,7 @@ echo "== pdflatex (4/4) ==" ; pdflatex -interaction=nonstopmode main.tex >> buil
 
 [ -f main.pdf ] || { echo "FAIL: no PDF produced"; grep -E "^! " build.log | head; exit 1; }
 
-status=0
+status=${macro_fail:-0}
 errs=$(grep -cE "^! " build.log || true)
 if [ "${errs:-0}" -gt 0 ]; then
   echo "FAIL: ${errs} LaTeX error(s):"

@@ -43,7 +43,11 @@ def load(exp: str) -> dict | None:
         return None
     res = load_json(p)
     if not res.get("complete", True):
-        MISSING.append(f"{exp} is still running (partial checkpoint)")
+        # Refuse partial data outright.  Reporting it but returning it anyway
+        # would let half-finished numbers reach the paper, which is precisely
+        # what this whole generation path exists to prevent.
+        MISSING.append(f"{exp} is incomplete (partial checkpoint); refusing to use it")
+        return None
     if "table" not in res and "tables" not in res and "summary" not in res:
         MISSING.append(f"{exp} has no aggregated table yet")
         return None
