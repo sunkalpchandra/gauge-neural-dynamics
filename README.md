@@ -30,6 +30,10 @@ expressible as a latent transformation. That makes the framework falsifiable, an
 two of the experimental conditions here are built so that no such transformation
 exists — the model is expected to fail on them, and does.
 
+**Picking this up?** Read [STATUS.md](STATUS.md) first: what is final, what is
+not, which results I would not trust without re-checking, and what I would do
+next.
+
 ---
 
 ## Quick start
@@ -202,6 +206,8 @@ right direction to a controlled perturbation.
 ---
 
 ## Scope and limitations
+
+A fuller and blunter account is in [STATUS.md](STATUS.md).
 
 This work is on **simulations**, built from published phenomenology and, for the
 motor case, from a network trained on a task rather than hand-designed. No claim
