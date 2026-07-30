@@ -28,8 +28,18 @@ if [ "${errs:-0}" -gt 0 ]; then
   grep -E "^! " build.log | sort -u | head
   status=1
 fi
-if grep -q "figure pending" main.log 2>/dev/null || grep -q "table pending" main.log 2>/dev/null; then
-  echo "FAIL: placeholders present -- run the experiments and figures first"
+# Placeholders are only visible in the typeset output, not reliably in the log,
+# so check for the inputs themselves instead.
+missing=""
+for f in $(grep -oE '\\gndinput\{[^}]+\}' main.tex appendix.tex | sed -E 's/.*\{(.*)\}/\1.tex/' | sort -u); do
+  [ -f "$f" ] || missing="$missing $f"
+done
+for f in $(grep -oE '\\gndfig\{[^}]+\}' main.tex appendix.tex | sed -E 's/.*\{(.*)\}/\1/' | sort -u); do
+  [ -f "figures/$f" ] || missing="$missing figures/$f"
+done
+if [ -n "$missing" ]; then
+  echo "FAIL: missing generated inputs (placeholders will render):"
+  for f in $missing; do echo "    $f"; done
   status=1
 fi
 und=$(grep -oE "Citation \`[^']+' undefined" build.log | sort -u || true)
@@ -38,6 +48,16 @@ ref=$(grep -oE "Reference \`[^']+' undefined" build.log | sort -u || true)
 if [ -n "$ref" ]; then echo "FAIL: undefined references:"; echo "$ref" | head; status=1; fi
 
 pages=$(grep -oE "Output written on main.pdf \([0-9]+ page" build.log | grep -oE "[0-9]+" | tail -1)
-echo "== ${pages:-?} pages total (body + references + appendix) =="
+
+# The venue limit is on the body only, so measure it from the \label{endofbody}
+# marker placed just before the bibliography rather than from the total.
+body=$(grep -oE '\\newlabel\{endofbody\}\{\{[^}]*\}\{[0-9]+\}' main.aux \
+        | grep -oE '[0-9]+\}$' | tr -d '}')
+limit=${GND_PAGE_LIMIT:-9}
+echo "== body ${body:-?} pages (limit ${limit}); ${pages:-?} pages total incl. references and appendix =="
+if [ -n "$body" ] && [ "$body" -gt "$limit" ]; then
+  echo "FAIL: body exceeds the ${limit}-page limit"
+  status=1
+fi
 if [ "$status" -eq 0 ]; then echo "OK: paper/main.pdf"; else echo "build completed with problems"; fi
 exit $status
