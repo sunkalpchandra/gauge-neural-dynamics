@@ -183,6 +183,8 @@ def do_exp1(macros: dict) -> None:
         "hipGNDalg": fmt(val(t, "GND", "algebra_recovery_r2"), sem(t, "GND", "algebra_recovery_r2")),
         "hipFlowTransport": fmt(val(t, "GND-flow", "transport_r2"), sem(t, "GND-flow", "transport_r2")),
         "hipFlowGre": fmt(val(t, "GND-flow", "gre"), sem(t, "GND-flow", "gre")),
+        "hipFlowMps": fmt(val(t, "GND-flow", "mps"), sem(t, "GND-flow", "mps")),
+        "hipFlowGcs": fmt(val(t, "GND-flow", "gcs"), sem(t, "GND-flow", "gcs")),
         "hipUnpairedTransport": fmt(val(t, "GND-unpaired", "transport_r2"),
                                     sem(t, "GND-unpaired", "transport_r2")),
         "hipUnpairedCis": fmt(val(t, "GND-unpaired", "cis"), sem(t, "GND-unpaired", "cis")),

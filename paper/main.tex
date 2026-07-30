@@ -424,13 +424,22 @@ Manifold alignment deserves a comment: it attains GCS \hipMAgcs, higher than our
 Its transformations compose because they are almost trivial, which is the failure
 mode the magnitude column exists to catch.
 
-The morph context behaves as the geometry says it should
-(Table~\ref{tab:hip-per-context}). It is a diffeomorphism but not an affine map,
-so the linear gauge cannot express it and scores \hipGNDmorph{} there; the flow
-gauge, which extends the same construction to diffeomorphisms, reaches
-\hipFlowMorph. Averaged over all contexts the two are closer, since four of the
-five are affine and the linear gauge handles those at least as well. The
-correspondence-free variant, which matches distributions instead of learning
+The morph context is where the linear gauge is provably mis-specified, being a
+diffeomorphism but not an affine map. In practice the mis-specification is mild:
+the linear gauge still recovers it to \hipGNDmorph{}
+(Table~\ref{tab:hip-per-context}), which is worse than its \hipGNDgre{} average
+but far from failure. The flow gauge, which extends the same construction to
+diffeomorphisms and ought therefore to win here, does not. It predicts slightly
+better (transport $R^2$ \hipFlowTransport{} against \hipGNDtransport) but
+recovers the geometry worse, both overall (GRE \hipFlowGre{} against
+\hipGNDgre; MPS \hipFlowMps{} against \hipGNDmps) and on the morph context
+itself (\hipFlowMorph). We read this as the price of expressiveness. A gauge
+flexible enough to absorb structure will absorb it, whereas the linear gauge is
+forced to express the same structure as a clean transformation. Constraining the
+gauge is not only a modelling convenience; it is part of what makes the
+transformation identifiable at all.
+
+The correspondence-free variant, which matches distributions instead of learning
 which samples correspond, reaches transport $R^2$ \hipUnpairedTransport{} and CIS
 \hipUnpairedCis; that matters, since paired samples are rarely available in real
 recordings.
@@ -624,6 +633,13 @@ algebra is abelian exactly where the biology says it should be, for grid-cell
 phase translations, and non-abelian exactly where it should not be, once a
 lattice automorphism is added; and truncating the composition law degrades
 composition consistency as predicted.
+
+One negative result is worth stating plainly. The flow gauge is a strict
+generalisation of the linear one, and it fits slightly better, yet it recovers
+the underlying geometry worse on every recovery measure we have -- including the
+one context the linear gauge cannot represent exactly. Expressiveness and
+identifiability pull in opposite directions here, and for the question this
+framework is asking, the constrained gauge is the more useful instrument.
 
 Two predictions are concrete enough to take to data. The first is
 \eqref{eq:conjugacy}: if reach conditions are related by a latent gauge
