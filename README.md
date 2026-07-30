@@ -35,7 +35,8 @@ exists — the model is expected to fail on them, and does.
 ## Quick start
 
 ```bash
-git clone <this repo> && cd gnd
+git clone https://github.com/sunkalpchandra/gauge-neural-dynamics.git
+cd gauge-neural-dynamics
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 
 # check the whole pipeline end-to-end in a few minutes
