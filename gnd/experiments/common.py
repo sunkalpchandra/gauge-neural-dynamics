@@ -163,6 +163,22 @@ def run_seed(
     return rows, arts
 
 
+def checkpoint(out, payload: dict, name: str = "results.json") -> None:
+    """Write partial results after every seed.
+
+    Without this a multi-hour sweep produces nothing at all if it is interrupted,
+    and the seeds already computed are lost.  Writing through a temporary file
+    keeps the on-disk copy readable at every moment.
+    """
+    from pathlib import Path
+
+    out = Path(out)
+    out.mkdir(parents=True, exist_ok=True)
+    tmp = out / (name + ".tmp")
+    save_json(payload, tmp)
+    tmp.replace(out / name)
+
+
 def aggregate_table(rows: list[dict], keys: tuple[str, ...]) -> dict:
     """Group rows by ``method`` and reduce each metric to mean / sem / n."""
     from ..utils.common import aggregate_seeds

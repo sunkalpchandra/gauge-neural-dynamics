@@ -25,7 +25,7 @@ import numpy as np
 from ..models.gnd import GNDConfig
 from ..simulations.hippocampus import simulate_place_cells
 from ..utils.common import RESULTS_DIR, aggregate_seeds, save_json, set_seed
-from .common import HEADLINE_KEYS, run_baseline, run_gnd
+from .common import HEADLINE_KEYS, checkpoint, run_baseline, run_gnd
 from .exp1_hippocampus import build_ground_truth
 
 SWEEP_BASELINES = ("pca", "autoencoder", "procrustes")
@@ -86,6 +86,8 @@ def main(argv=None) -> dict:
                                     ae_epochs=max(args.epochs, 200)):
                     r.update({"sweep": tag, "value": val, "seed": seed})
                     rows.append(r)
+                checkpoint(Path(args.out), {"rows": rows, "args": vars(args),
+                                            "complete": False})
                 got = [r for r in rows if r.get("sweep") == tag and r.get("value") == val and r.get("seed") == seed]
                 g = next((r for r in got if r.get("method") == "GND"), {})
                 print(

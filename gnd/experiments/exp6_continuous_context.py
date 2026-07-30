@@ -41,6 +41,7 @@ from ..models.gnd import GNDConfig
 from ..models.train import fit_gnd
 from ..simulations.hippocampus import simulate_place_cells
 from ..utils.common import RESULTS_DIR, aggregate_seeds, save_json, set_seed
+from .common import checkpoint
 from .evaluate import canonical_from_model, gauge_summary_from_model
 
 ARC_HELD_OUT = (1, 4, 8, 11)          # indices within the 13-point arc
@@ -152,6 +153,8 @@ def main(argv=None) -> dict:
         cfg = replace(base, seed=seed)
 
         # ---------------- Part A: interpolation over a contractible arc ----
+        checkpoint(Path(args.out), {"rows": rows, "summary": {}, "args": vars(args),
+                                    "complete": False})
         if "arc" in args.parts:
             print(f"=== exp6 [arc] seed {seed} ===")
             set_seed(seed)

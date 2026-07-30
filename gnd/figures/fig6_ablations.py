@@ -38,8 +38,8 @@ CORE = [
     ("no anchoring", "no identity anchoring"),
     ("unpaired (MMD)", "unpaired alignment"),
     ("gauge=flow", "flow (non-linear) gauge"),
-    ("algebra=so", r"isometric gauge $\mathfrak{so}$"),
-    ("algebra=sl", r"volume-preserving $\mathfrak{sl}$"),
+    ("algebra=so", "isometric gauge (so)"),
+    ("algebra=sl", "volume-preserving (sl)"),
     ("BCH order 1", "BCH order 1"),
     ("encoder=VAE", "variational encoder"),
     ("K=2 generators", "K = 2 generators"),
@@ -60,7 +60,7 @@ def main(out: Path | None = None) -> Path:
 
     fig = plt.figure(figsize=(7.0, 3.35))
     gs = fig.add_gridspec(1, 3, width_ratios=[1.35, 1.05, 0.85], wspace=0.52,
-                          left=0.19, right=0.985, top=0.90, bottom=0.155)
+                          left=0.215, right=0.985, top=0.90, bottom=0.155)
 
     # ---------- a: change in transport R^2 --------------------------------
     ax = fig.add_subplot(gs[0, 0])
@@ -73,7 +73,7 @@ def main(out: Path | None = None) -> Path:
                 capsize=1.4, capthick=0.7, zorder=4)
     ax.axvline(0, color=INK, lw=0.8, zorder=5)
     ax.set_yticks(y)
-    ax.set_yticklabels([d[0] for d in deltas], fontsize=6.3)
+    ax.set_yticklabels([d[0] for d in deltas], fontsize=6.1)
     ax.set_xlabel(r"change in transport $R^2$ vs. full model")
     ax.set_title(f"full model: $R^2$ = {full['transport_r2']:.3f}", fontsize=6.8, pad=3)
     for yi, v in zip(y, vals):
@@ -103,7 +103,7 @@ def main(out: Path | None = None) -> Path:
     ax.set_ylim(-0.7, len(order) - 0.3)
     ax.set_xlabel("metric value")
     ax.legend(fontsize=5.9, loc="lower right", handletextpad=0.25, borderpad=0.15)
-    ax.set_title("dashed: full model", fontsize=6.8, pad=3)
+    ax.set_title("same rows as (a); dashed = full model", fontsize=6.5, pad=3)
     hairline_grid(ax, "x")
     panel_label(ax, "b", dx=-0.10, dy=1.13)
 

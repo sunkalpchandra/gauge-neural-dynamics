@@ -31,11 +31,23 @@ MISSING: list[str] = []
 
 # ---------------------------------------------------------------------------
 def load(exp: str) -> dict | None:
+    """Load a results file, tolerating the per-seed checkpoints.
+
+    A checkpoint written mid-run carries ``complete: False`` and has no
+    aggregated table yet; we say so rather than crashing, so that a partial
+    build still tells you what is and is not final.
+    """
     p = RESULTS_DIR / exp / "results.json"
     if not p.exists():
         MISSING.append(f"results for {exp}")
         return None
-    return load_json(p)
+    res = load_json(p)
+    if not res.get("complete", True):
+        MISSING.append(f"{exp} is still running (partial checkpoint)")
+    if "table" not in res and "tables" not in res and "summary" not in res:
+        MISSING.append(f"{exp} has no aggregated table yet")
+        return None
+    return res
 
 
 def cell(table: dict, method: str, key: str, digits: int = 3, best: bool = False) -> str:
@@ -184,6 +196,23 @@ def do_exp1(macros: dict) -> None:
         "hipGNDmag": fmt(val(t, "GND", "transform_magnitude"),
                          sem(t, "GND", "transform_magnitude"), 2),
     })
+    # Recovery on the deliberately non-affine morph context, where the linear
+    # gauge is expected to fail and the flow gauge to do better.  Quoted
+    # separately because the overall GRE averages over four affine contexts too.
+    def morph_gre(method):
+        sub = [r for r in res["rows"] if r.get("method") == method]
+        key = next((k for k in (sub[0] if sub else {}) if k.startswith("gre::") and "morph" in k), None)
+        if key is None:
+            return float("nan"), float("nan")
+        v = np.array([r[key] for r in sub if np.isfinite(r.get(key, np.nan))])
+        if v.size == 0:
+            return float("nan"), float("nan")
+        return float(v.mean()), float(v.std(ddof=1) / np.sqrt(v.size)) if v.size > 1 else 0.0
+
+    macros["hipGNDmorph"] = fmt(*morph_gre("GND"))
+    macros["hipFlowMorph"] = fmt(*morph_gre("GND-flow"))
+    macros["hipPCAmorph"] = fmt(*morph_gre("PCA"))
+
     # per-context recovery, including the deliberately non-affine morph
     rows = [r for r in res["rows"] if r.get("method") == "GND"]
     keys = sorted({k for r in rows for k in r if k.startswith("gre::")})
@@ -215,7 +244,7 @@ def do_exp2(macros: dict) -> None:
     res = load("exp2_grid_cells")
     if res is None:
         return
-    tabs = res["tables"]
+    tabs = res.get("tables", {})
     main = tabs.get("translation", {})
     n_seeds = max((v.get("_n_seeds", 0) for v in main.values()), default=0)
     write("table_grid.tex", comparison_table(
@@ -355,7 +384,7 @@ def do_exp4(macros: dict) -> None:
     res = load("exp4_ablations")
     if res is None:
         return
-    t = res["table"]
+    t = res.get("table", {})
     full = val(t, "full", "transport_r2")
     order = ["full", "A1: no gauge", "A2: no group loss", "A2a: no closure only",
              "A3: no topology", "no transport loss", "no invariance loss",
@@ -413,7 +442,7 @@ def do_exp5(macros: dict) -> None:
     res = load("exp5_robustness")
     if res is None:
         return
-    t = res["table"]
+    t = res.get("table", {})
 
     def g(sweep, value, method, key):
         try:
@@ -476,8 +505,8 @@ def do_exp6(macros: dict) -> None:
     res = load("exp6_continuous_context")
     if res is None:
         return
-    s = res["summary"]
-    rows = res["rows"]
+    s = res.get("summary", {})
+    rows = res.get("rows", [])
 
     def g(group, key):
         try:

@@ -424,12 +424,16 @@ Manifold alignment deserves a comment: it attains GCS \hipMAgcs, higher than our
 Its transformations compose because they are almost trivial, which is the failure
 mode the magnitude column exists to catch.
 
-The morph context behaves as expected (Table~\ref{tab:hip-per-context}): the
-linear gauge does worst there and the flow gauge recovers it, improving overall
-GRE from \hipGNDgre{} to \hipFlowGre. The correspondence-free variant, which
-matches distributions instead of learning which samples correspond, reaches
-transport $R^2$ \hipUnpairedTransport{} and CIS \hipUnpairedCis; that matters,
-since paired samples are rarely available in real recordings.
+The morph context behaves as the geometry says it should
+(Table~\ref{tab:hip-per-context}). It is a diffeomorphism but not an affine map,
+so the linear gauge cannot express it and scores \hipGNDmorph{} there; the flow
+gauge, which extends the same construction to diffeomorphisms, reaches
+\hipFlowMorph. Averaged over all contexts the two are closer, since four of the
+five are affine and the linear gauge handles those at least as well. The
+correspondence-free variant, which matches distributions instead of learning
+which samples correspond, reaches transport $R^2$ \hipUnpairedTransport{} and CIS
+\hipUnpairedCis; that matters, since paired samples are rarely available in real
+recordings.
 
 \begin{figure}[t]
   \centering

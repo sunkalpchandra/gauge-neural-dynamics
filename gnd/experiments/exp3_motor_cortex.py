@@ -28,7 +28,8 @@ from ..models.neural_dynamics import dynamics_spectrum, fit_linear_dynamics, rot
 from ..simulations.base import ContextualDataset
 from ..simulations.motor_cortex import ReachTaskConfig, equivariance_defect, simulate_motor_cortex
 from ..utils.common import RESULTS_DIR, save_json
-from .common import DEFAULT_BASELINES, HEADLINE_KEYS, aggregate_table, run_seed
+from .common import (DEFAULT_BASELINES, HEADLINE_KEYS, aggregate_table, checkpoint,
+                     run_seed)
 from .evaluate import GroundTruth
 
 
@@ -206,6 +207,9 @@ def main(argv=None) -> dict:
         if first_art is None:
             first_art = art
             first_art["rnn_ceiling"] = ceil
+        checkpoint(Path(args.out), {"rows": rows,
+                                    "table": aggregate_table(rows, HEADLINE_KEYS),
+                                    "args": vars(args), "complete": False})
 
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)

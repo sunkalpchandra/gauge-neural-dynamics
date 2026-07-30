@@ -10,10 +10,15 @@ from ..utils.common import RESULTS_DIR, load_json
 
 
 def load(exp: str) -> dict:
+    """Load results, refusing to plot from a still-running checkpoint."""
     p = RESULTS_DIR / exp / "results.json"
     if not p.exists():
         raise FileNotFoundError(f"missing {p}; run the experiment first")
-    return load_json(p)
+    res = load_json(p)
+    if not res.get("complete", True):
+        raise FileNotFoundError(
+            f"{exp} is still running (partial checkpoint); wait for it to finish")
+    return res
 
 
 def load_artifacts(exp: str, name: str = "artifacts.npz") -> dict:

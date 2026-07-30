@@ -34,7 +34,8 @@ from ..models.gnd import GNDConfig
 from ..simulations.base import ContextualDataset
 from ..simulations.grid_cells import block_rotation, simulate_grid_cells, torus_embedding
 from ..utils.common import RESULTS_DIR, save_json
-from .common import DEFAULT_BASELINES, HEADLINE_KEYS, aggregate_table, run_seed
+from .common import (DEFAULT_BASELINES, HEADLINE_KEYS, aggregate_table, checkpoint,
+                     run_seed)
 from .evaluate import GroundTruth
 
 
@@ -167,6 +168,10 @@ def main(argv=None) -> dict:
             rows += r
             if ctx_kind == args.main_context_set and not first_art:
                 first_art = art
+            checkpoint(Path(args.out), {
+                "rows": all_rows + rows,
+                "tables": {**tables, ctx_kind: aggregate_table(rows, HEADLINE_KEYS)},
+                "args": vars(args), "complete": False})
         all_rows += rows
         tables[ctx_kind] = aggregate_table(rows, HEADLINE_KEYS)
 

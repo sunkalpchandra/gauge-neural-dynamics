@@ -26,7 +26,8 @@ from ..models.gnd import GNDConfig
 from ..simulations.base import ContextualDataset
 from ..simulations.hippocampus import simulate_place_cells
 from ..utils.common import RESULTS_DIR, save_json
-from .common import DEFAULT_BASELINES, HEADLINE_KEYS, aggregate_table, run_seed
+from .common import (DEFAULT_BASELINES, HEADLINE_KEYS, aggregate_table, checkpoint,
+                     run_seed)
 from .evaluate import GroundTruth
 
 
@@ -117,6 +118,9 @@ def main(argv=None) -> dict:
         rows += r
         if first_art is None:
             first_art = art
+        checkpoint(Path(args.out), {"rows": rows,
+                                    "table": aggregate_table(rows, HEADLINE_KEYS),
+                                    "args": vars(args), "complete": False})
         for row in r:
             if "error" in row:
                 continue

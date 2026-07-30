@@ -29,7 +29,7 @@ import numpy as np
 from ..models.gnd import GNDConfig
 from ..simulations.hippocampus import simulate_place_cells
 from ..utils.common import RESULTS_DIR, aggregate_seeds, save_json, set_seed
-from .common import HEADLINE_KEYS, aggregate_table, run_gnd
+from .common import HEADLINE_KEYS, aggregate_table, checkpoint, run_gnd
 from .exp1_hippocampus import build_ground_truth
 
 
@@ -110,6 +110,7 @@ def main(argv=None) -> dict:
             )
             res.update({"seed": seed, "ablation": name, **{f"cfg_{k}": v for k, v in ov.items()}})
             rows.append(res)
+            checkpoint(Path(args.out), {"rows": rows, "args": vars(args), "complete": False})
             print(
                 f"  [seed {seed}] {name:<22} GCS={res['gcs']:.3f} CIS={res['cis']:.3f} "
                 f"GRE={res['gre']:.3f} MPS={res['mps']:.3f} "
