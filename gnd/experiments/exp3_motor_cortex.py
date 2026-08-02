@@ -127,7 +127,7 @@ def dynamics_conjugacy(z_obs: np.ndarray, test: ContextualDataset, dt: float) ->
     for c in range(test.n_contexts):
         A = fit_linear_dynamics(Z[n_prep:, c], dt=dt)
         As.append(A)
-        freqs.append(dynamics_spectrum(A, dt=dt)["top_frequency_hz"])
+        freqs.append(dynamics_spectrum(A)["top_frequency_hz"])
     freqs = np.array(freqs)
     ref = test.reference
     angles = [rotational_plane_angle(As[ref], As[c]) for c in range(test.n_contexts) if c != ref]
@@ -222,15 +222,18 @@ def main(argv=None) -> dict:
         "circuit_reference_rotation_frequency_hz_mean",
     )
     table = aggregate_table(rows, keys)
-    save_json({"rows": rows, "table": table, "args": vars(args)}, out / "results.json")
-    _save_artifacts(out, first_art)
+    save_json({"rows": rows, "table": table, "args": vars(args), "complete": True},
+              out / "results.json")
+    _save_artifacts(out, first_art, args.seeds[0])
     print(f"\nwrote {out/'results.json'}")
     return {"rows": rows, "table": table}
 
 
-def _save_artifacts(out: Path, art: dict) -> None:
+def _save_artifacts(out: Path, art: dict, seed: int) -> None:
+    """Persist what Figure 5 needs, stamped with the seed that produced it."""
     ds, test = art["dataset"], art["test"]
     payload = {
+        "provenance_seed": np.array(seed),
         "context_names": np.array([s.name for s in test.contexts]),
         "angles": ds.meta["angles"],
         "extents": ds.meta["extents"],

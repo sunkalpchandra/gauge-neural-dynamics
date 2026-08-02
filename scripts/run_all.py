@@ -9,6 +9,10 @@ Stages run in order and each is skipped if ``--stage`` names a different one.
 Experiments run as separate processes so that a failure in one does not lose the
 others; each writes ``results/<name>/results.json`` plus the artefacts its figure
 needs.
+
+``--quick`` redirects every stage to ``results/quick`` and ``figures/quick`` so
+that a smoke test can never overwrite the results and figures the paper is built
+from.  The exit code is non-zero if any stage failed.
 """
 
 from __future__ import annotations
@@ -59,12 +63,23 @@ def main(argv=None) -> int:
 
     t0 = time.time()
     stages = ["experiments", "figures", "tables", "paper"] if args.stage == "all" else [args.stage]
+    failures: list[str] = []
+
+    # A smoke run writes toy numbers.  Send them somewhere the paper never reads,
+    # so that following the README's quick start cannot silently replace the
+    # multi-seed results and figures under version control.
+    scratch = {}
+    if args.quick:
+        scratch = {"GND_RESULTS_DIR": str(ROOT / "results" / "quick"),
+                   "GND_FIGURE_DIR": str(ROOT / "figures" / "quick")}
+        print(f"== quick mode: writing to {scratch['GND_RESULTS_DIR']} "
+              f"and {scratch['GND_FIGURE_DIR']} ==")
 
     if "experiments" in stages:
         todo = [(n, a) for n, a in EXPERIMENTS if not args.only or n in args.only]
         print(f"== running {len(todo)} experiments ({args.jobs} at a time) ==")
         env = {"OMP_NUM_THREADS": str(args.threads), "MKL_NUM_THREADS": str(args.threads),
-               "PYTHONUNBUFFERED": "1"}
+               "PYTHONUNBUFFERED": "1", **scratch}
 
         def one(item):
             name, extra = item
@@ -82,20 +97,31 @@ def main(argv=None) -> int:
             codes = list(ex.map(one, todo))
         if any(codes):
             print("one or more experiments failed; see results/logs/")
+            failures += [n for (n, _), c in zip(todo, codes) if c]
 
     if "figures" in stages:
         print("== figures ==")
-        run([PY, "-m", "gnd.figures.make_all"])
+        if run([PY, "-m", "gnd.figures.make_all"], env=scratch):
+            failures.append("figures")
 
     if "tables" in stages:
         print("== tables and in-text numbers ==")
-        run([PY, str(ROOT / "scripts" / "make_tables.py")])
+        if run([PY, str(ROOT / "scripts" / "make_tables.py")], env=scratch):
+            failures.append("tables")
 
-    if "paper" in stages:
+    if "paper" in stages and not args.quick:
         print("== paper ==")
-        run(["bash", str(ROOT / "scripts" / "build_paper.sh")])
+        if run(["bash", str(ROOT / "scripts" / "build_paper.sh")]):
+            failures.append("paper")
+    elif "paper" in stages:
+        print("== paper == (skipped: quick mode builds no paper from toy numbers)")
 
     print(f"\ntotal {time.time() - t0:.0f}s")
+    if failures:
+        # Returning 0 here would let a broken sweep flow straight through the
+        # figure, table and paper stages and still report success to CI.
+        print("FAILED stages: " + ", ".join(failures))
+        return 1
     return 0
 
 

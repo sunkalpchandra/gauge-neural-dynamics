@@ -10,7 +10,7 @@ from ..utils.common import RESULTS_DIR, load_json
 
 
 def load(exp: str) -> dict:
-    """Load results, refusing to plot from a still-running checkpoint."""
+    """Load results, refusing to plot from a still-running or pilot run."""
     p = RESULTS_DIR / exp / "results.json"
     if not p.exists():
         raise FileNotFoundError(f"missing {p}; run the experiment first")
@@ -18,13 +18,23 @@ def load(exp: str) -> dict:
     if not res.get("complete", True):
         raise FileNotFoundError(
             f"{exp} is still running (partial checkpoint); wait for it to finish")
+    if res.get("args", {}).get("quick"):
+        raise FileNotFoundError(
+            f"{exp} holds a --quick pilot run, not a full sweep; re-run it without --quick")
     return res
 
 
 def load_artifacts(exp: str, name: str = "artifacts.npz") -> dict:
+    """Load an experiment's saved arrays, refusing a pilot or unfinished run.
+
+    The archive carries no numbers of its own but every figure is drawn from it,
+    so it is gated on the same provenance as ``results.json`` beside it: a
+    ``--quick`` run writes a perfectly well-formed archive of toy latents.
+    """
     p = RESULTS_DIR / exp / name
     if not p.exists():
         raise FileNotFoundError(f"missing {p}; run the experiment first")
+    load(exp)
     with np.load(p, allow_pickle=False) as z:
         return {k: z[k] for k in z.files}
 

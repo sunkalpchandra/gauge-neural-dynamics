@@ -1,6 +1,6 @@
 \begin{table}[t]
 \centering
-\caption{\textbf{Experiment 2: grid-cell phase translations.} Mean $\pm$ s.e.m.\ over 1 seeds. The context family is the abelian translation group $T^2$, which acts on the $\mathbb{R}^4$ torus embedding as a pair of independent plane rotations, so the correct algebra is commuting and the correct Betti numbers are $(1,2,1)$.}
+\caption{\textbf{Experiment 2: grid-cell phase translations.} Mean $\pm$ s.e.m.\ over 5 seeds. The context family is the abelian translation group $T^2$, which acts on the $\mathbb{R}^4$ torus embedding as a pair of independent plane rotations, so the correct algebra is commuting and the correct Betti numbers are $(1,2,1)$.}
 \label{tab:grid}
 \vspace{2pt}
 \small
@@ -8,17 +8,16 @@
 \toprule
 Method & Transport $R^2\!\uparrow$ & CIS$\uparrow$ & GCS$\uparrow$ & GRE$\downarrow$ & MPS$\uparrow$ & Alg.\ $R^2\!\uparrow$ & $\|T_c-\mathrm{id}\|$ \\
 \midrule
-\textbf{GND (ours)} & \textbf{0.941\,\tiny{$\pm$\,0.000}} & \textbf{0.999\,\tiny{$\pm$\,0.000}} & \textbf{0.994\,\tiny{$\pm$\,0.000}} & 0.447\,\tiny{$\pm$\,0.000} & 0.901\,\tiny{$\pm$\,0.000} & -- & 1.18\,\tiny{$\pm$\,0.00} \\
-\textbf{GND-flow} & -1.178\,\tiny{$\pm$\,0.000} & 0.981\,\tiny{$\pm$\,0.000} & 0.941\,\tiny{$\pm$\,0.000} & 10.276\,\tiny{$\pm$\,0.000} & 0.820\,\tiny{$\pm$\,0.000} & -- & 0.96\,\tiny{$\pm$\,0.00} \\
-\textbf{GND-gl} & -0.299\,\tiny{$\pm$\,0.000} & 0.982\,\tiny{$\pm$\,0.000} & 0.934\,\tiny{$\pm$\,0.000} & 1.694\,\tiny{$\pm$\,0.000} & 0.814\,\tiny{$\pm$\,0.000} & -- & 1.16\,\tiny{$\pm$\,0.00} \\
+\textbf{GND (ours)} & 0.646\,\tiny{$\pm$\,0.298} & 0.999\,\tiny{$\pm$\,0.001} & \textbf{0.999\,\tiny{$\pm$\,0.001}} & 0.540\,\tiny{$\pm$\,0.104} & 0.931\,\tiny{$\pm$\,0.035} & -7.659\,\tiny{$\pm$\,0.605} & 1.19\,\tiny{$\pm$\,0.05} \\
+\textbf{GND-gl} & \textbf{0.944\,\tiny{$\pm$\,0.000}} & \textbf{0.999\,\tiny{$\pm$\,0.000}} & 0.994\,\tiny{$\pm$\,0.001} & 0.436\,\tiny{$\pm$\,0.000} & \textbf{0.957\,\tiny{$\pm$\,0.010}} & -8.427\,\tiny{$\pm$\,0.087} & 1.22\,\tiny{$\pm$\,0.02} \\
 \midrule
-PCA & 0.847\,\tiny{$\pm$\,0.000} & 0.936\,\tiny{$\pm$\,0.000} & 0.905\,\tiny{$\pm$\,0.000} & \textbf{0.158\,\tiny{$\pm$\,0.000}} & 0.880\,\tiny{$\pm$\,0.000} & -- & 1.21\,\tiny{$\pm$\,0.00} \\
-UMAP & 0.226\,\tiny{$\pm$\,0.000} & 0.246\,\tiny{$\pm$\,0.000} & 0.580\,\tiny{$\pm$\,0.000} & 0.553\,\tiny{$\pm$\,0.000} & 0.852\,\tiny{$\pm$\,0.000} & -- & 1.05\,\tiny{$\pm$\,0.00} \\
-Autoencoder & 0.801\,\tiny{$\pm$\,0.000} & 0.903\,\tiny{$\pm$\,0.000} & 0.480\,\tiny{$\pm$\,0.000} & 0.217\,\tiny{$\pm$\,0.000} & 0.910\,\tiny{$\pm$\,0.000} & -- & 1.20\,\tiny{$\pm$\,0.00} \\
-VAE & 0.117\,\tiny{$\pm$\,0.000} & 0.722\,\tiny{$\pm$\,0.000} & 0.000\,\tiny{$\pm$\,0.000} & 0.441\,\tiny{$\pm$\,0.000} & 0.854\,\tiny{$\pm$\,0.000} & -- & 1.00\,\tiny{$\pm$\,0.00} \\
-CCA & -0.184\,\tiny{$\pm$\,0.000} & 0.717\,\tiny{$\pm$\,0.000} & 0.488\,\tiny{$\pm$\,0.000} & 1.127\,\tiny{$\pm$\,0.000} & 0.827\,\tiny{$\pm$\,0.000} & -- & 1.37\,\tiny{$\pm$\,0.00} \\
-Procrustes & 0.152\,\tiny{$\pm$\,0.000} & 0.931\,\tiny{$\pm$\,0.000} & 0.601\,\tiny{$\pm$\,0.000} & 0.725\,\tiny{$\pm$\,0.000} & 0.868\,\tiny{$\pm$\,0.000} & -- & 1.05\,\tiny{$\pm$\,0.00} \\
-ManifoldAlign & 0.112\,\tiny{$\pm$\,0.000} & 0.976\,\tiny{$\pm$\,0.000} & 0.992\,\tiny{$\pm$\,0.000} & 0.974\,\tiny{$\pm$\,0.000} & \textbf{0.912\,\tiny{$\pm$\,0.000}} & -- & 0.04\,\tiny{$\pm$\,0.00} \\
+PCA & 0.855\,\tiny{$\pm$\,0.008} & 0.930\,\tiny{$\pm$\,0.004} & 0.860\,\tiny{$\pm$\,0.005} & \textbf{0.162\,\tiny{$\pm$\,0.004}} & 0.830\,\tiny{$\pm$\,0.002} & \textbf{0.581\,\tiny{$\pm$\,0.028}} & 1.22\,\tiny{$\pm$\,0.00} \\
+UMAP & 0.195\,\tiny{$\pm$\,0.079} & 0.122\,\tiny{$\pm$\,0.052} & 0.442\,\tiny{$\pm$\,0.132} & 0.591\,\tiny{$\pm$\,0.096} & 0.678\,\tiny{$\pm$\,0.013} & -17.755\,\tiny{$\pm$\,16.482} & 1.12\,\tiny{$\pm$\,0.05} \\
+Autoencoder & 0.674\,\tiny{$\pm$\,0.078} & 0.650\,\tiny{$\pm$\,0.167} & 0.495\,\tiny{$\pm$\,0.160} & 0.256\,\tiny{$\pm$\,0.042} & 0.773\,\tiny{$\pm$\,0.046} & 0.040\,\tiny{$\pm$\,0.381} & 1.17\,\tiny{$\pm$\,0.02} \\
+VAE & 0.168\,\tiny{$\pm$\,0.075} & 0.252\,\tiny{$\pm$\,0.113} & 0.287\,\tiny{$\pm$\,0.176} & 0.483\,\tiny{$\pm$\,0.051} & 0.614\,\tiny{$\pm$\,0.034} & -18.902\,\tiny{$\pm$\,11.562} & 1.06\,\tiny{$\pm$\,0.04} \\
+CCA & -0.060\,\tiny{$\pm$\,0.020} & 0.535\,\tiny{$\pm$\,0.078} & 0.164\,\tiny{$\pm$\,0.111} & 1.352\,\tiny{$\pm$\,0.171} & 0.597\,\tiny{$\pm$\,0.015} & -186.284\,\tiny{$\pm$\,159.573} & 2.04\,\tiny{$\pm$\,0.20} \\
+Procrustes & 0.382\,\tiny{$\pm$\,0.092} & 0.924\,\tiny{$\pm$\,0.004} & 0.620\,\tiny{$\pm$\,0.036} & 0.675\,\tiny{$\pm$\,0.082} & 0.814\,\tiny{$\pm$\,0.005} & -11.186\,\tiny{$\pm$\,8.614} & 1.09\,\tiny{$\pm$\,0.04} \\
+ManifoldAlign & 0.119\,\tiny{$\pm$\,0.002} & 0.973\,\tiny{$\pm$\,0.001} & 0.991\,\tiny{$\pm$\,0.000} & 0.976\,\tiny{$\pm$\,0.002} & 0.901\,\tiny{$\pm$\,0.002} & -2.476\,\tiny{$\pm$\,0.812} & 0.04\,\tiny{$\pm$\,0.00} \\
 \bottomrule
 \end{tabular}
 \end{table}

@@ -604,7 +604,10 @@ def manifold_preservation_score(
     (ii) *Ground-truth* preservation: they should also agree with the diagram of
     the true latent manifold.  We summarise both as
 
-        MPS = 1 / (1 + mean_d W_2(diagram_d, reference diagram_d)) ,
+        MPS = 1 / (1 + mean_d d_B(diagram_d, reference diagram_d)) ,
+
+    where ``d_B`` is the bottleneck distance -- what the code below actually
+    computes, and what the paper reports.
 
     which lies in ``(0, 1]`` and equals 1 for an exact match.
     """

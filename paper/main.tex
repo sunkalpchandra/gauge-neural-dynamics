@@ -474,7 +474,9 @@ All three hold. Composition is essentially exact, GCS \gridGNDgcs, the highest
 of the three experiments and what one should expect for the simplest of the three
 groups. The realised algebra very nearly commutes, \gridRealisedAbelian{}
 against \hipRealisedAbelian{} for the place-cell contexts, whose true group
-contains rotations and shears and is genuinely non-abelian. The distinction
+contains rotations and shears and is genuinely non-abelian (that second figure is
+a single-seed value recomputed from the saved generators, since Experiment 1
+predates the measure). The distinction
 matters: the commutator of the learned \emph{basis} is \gridGNDabelian, which would
 read as a failed prediction, but the basis spans six directions while the
 contexts exercise a two-dimensional subgroup, and nothing in the objective asks
@@ -490,21 +492,36 @@ the Fourier modes $\cos\theta$ and $\sin\theta$ that constitute the torus
 embedding; PCA lands on nearly the right chart without being asked to. What it
 does not recover is the group: its GCS is \gridPCAgcs{} against our
 \gridGNDgcs, and it finds the toroidal homology in \gridPCAbetti{} of runs
-against our \gridGNDbetti. The isometric restriction is likewise a trade rather
-than a free win: it gives a cleaner group than the unrestricted variant (GCS
-\gridGNDgcs{} against \gridGLgcs) at some cost in chart quality (GRE
-\gridGNDgre{} against \gridGLgre).
+against our \gridGNDbetti. The isometric restriction costs nothing in accuracy
+and something in optimisation. On the \gridConvergedSeeds{} seeds where both
+variants converge they are indistinguishable on recovery (GRE \gridGNDgreConv{}
+against \gridGLgreConv, transport $R^2$ \gridGNDtransportConv{} against
+\gridGLtransportConv) while the isometric gauge composes better (GCS
+\gridGNDgcs{} against \gridGLgcs); on the remaining \gridFailedSeeds{} it does
+not converge, ending at \gridLossRatio{} times the median final training loss.
+Table~\ref{tab:grid} reports every seed, which is why its transport $R^2$ carries
+a wide interval. A fit is counted as failed on its training loss alone -- above
+\gridLossTol{} times the median for that model -- never on the evaluation
+measures being compared.
 
 Two further families probe the boundaries (Table~\ref{tab:grid-families}). Adding
 the $60^\circ$ lattice automorphism, an integer matrix and hence a genuine torus
 map, makes the group $T^2 \rtimes Z_6$ non-abelian, so a non-zero commutator is
-now the right answer and the norm rises to \gridRotAbelian; being non-linear on
-the $\R^4$ embedding, it defeats the linear gauge (GRE \gridRotGre) while the
-flow gauge does better (\gridRotFlowGre). The third family is a control we expect
+now the right answer and the realised norm rises from \gridRealisedAbelian{} to
+\gridRotRealisedAbelian. What the automorphism costs the linear gauge is
+composition rather than chart: GCS falls to \gridRotGcs{} from \gridGNDgcs,
+while GRE is \gridRotGre{} and transport $R^2$ \gridRotTransport. Being non-linear
+on the $\R^4$ embedding it is a case the flow gauge should handle better, and on
+\gridRotFlowBetterSeeds{} seeds it does; on the rest it diverges, leaving it
+worse on average (GRE \gridRotFlowGre, transport $R^2$
+\gridRotFlowTransport). We report that spread rather than the mean alone,
+because the mean of a bimodal outcome describes neither mode. The third family
+is a control we expect
 to fail: a non-integer grid rescaling \citep{barry2007experience} is well defined
 on the universal cover but is not a map on the torus at all, so no latent gauge
 transformation can express it. GRE there is \gridCtrlGre{} and transport $R^2$
-falls to \gridCtrlTransport. The framework says in advance which phenomena lie
+falls from \gridGNDtransportConv{} to \gridCtrlTransport, on every seed. The
+framework says in advance which phenomena lie
 outside it, and the measurements agree.
 
 \begin{figure}[t]

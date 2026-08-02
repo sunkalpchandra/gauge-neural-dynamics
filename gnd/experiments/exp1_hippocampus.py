@@ -134,16 +134,22 @@ def main(argv=None) -> dict:
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     table = aggregate_table(rows, HEADLINE_KEYS)
-    save_json({"rows": rows, "table": table, "args": vars(args)}, out / "results.json")
-    _save_artifacts(out, first_art, rows)
+    save_json({"rows": rows, "table": table, "args": vars(args), "complete": True},
+              out / "results.json")
+    _save_artifacts(out, first_art, rows, args.seeds[0])
     print(f"\nwrote {out/'results.json'}")
     return {"rows": rows, "table": table}
 
 
-def _save_artifacts(out: Path, art: dict, rows: list[dict]) -> None:
-    """Persist what the figure scripts need (first seed only)."""
+def _save_artifacts(out: Path, art: dict, rows: list[dict], seed: int) -> None:
+    """Persist what the figure scripts need (first seed only).
+
+    The seed is stored with the arrays: an archive that carries no record of the
+    run that produced it can silently outlive the results.json beside it.
+    """
     ds, test = art["dataset"], art["test"]
     payload = {
+        "provenance_seed": np.array(seed),
         "latent_test": test.latent,
         "context_names": np.array([s.name for s in test.contexts]),
         "centres": ds.meta["centres"],

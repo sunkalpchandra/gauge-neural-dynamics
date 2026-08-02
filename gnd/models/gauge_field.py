@@ -452,7 +452,14 @@ class FlowGaugeField(nn.Module):
 
     # -- algebra structure -------------------------------------------------
     def _jacobian_action(self, z: torch.Tensor, k: int, w: torch.Tensor) -> torch.Tensor:
-        """``D V_k(z) w``, evaluated by reverse-mode differentiation.
+        """``D V_k(z) w``, the Jacobian-vector product.
+
+        A single ``autograd.grad`` of ``V_k`` with ``grad_outputs=w`` would give
+        the *vector*-Jacobian product ``J^T w``, which is a different quantity
+        whenever ``J`` is not symmetric -- and the linear part of a gauge
+        generator is never symmetric.  The double-backward below is the standard
+        way to get ``J w`` from reverse mode: differentiating ``J^T v`` with
+        respect to the dummy ``v`` contracts the transpose away.
 
         ``torch.enable_grad`` is forced on so that the bracket can also be
         evaluated inside ``no_grad`` blocks at analysis time.  The result is
@@ -462,8 +469,10 @@ class FlowGaugeField(nn.Module):
         """
         with torch.enable_grad():
             zz = z.detach().requires_grad_(True)
+            v = torch.zeros_like(zz, requires_grad=True)
             Vk = self.basis_fields(zz)[:, k]
-            (jvp,) = torch.autograd.grad(Vk, zz, grad_outputs=w.detach(), retain_graph=False)
+            (vjp,) = torch.autograd.grad(Vk, zz, grad_outputs=v, create_graph=True)
+            (jvp,) = torch.autograd.grad(vjp, v, grad_outputs=w.detach(), retain_graph=False)
         return jvp.detach()
 
     def structure_constants(self, z: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
@@ -544,7 +553,14 @@ class FlowGaugeField(nn.Module):
         out = a + b
         if order >= 2:
             ab = self.bracket(a, b, f)
-            out = out + 0.5 * ab
+            # Minus, not plus.  ``f`` are the structure constants of the *vector
+            # field* bracket, which for a linear field carries the opposite sign
+            # to the matrix commutator: [V_A, V_B] = V_{-[A,B]}.  BCH in matrix
+            # coordinates is A + B + (1/2)[A,B], so in these coordinates the
+            # second-order term is -(1/2)[a,b].  The third-order term is
+            # unaffected: both of its brackets flip sign, and the two flips
+            # cancel.
+            out = out - 0.5 * ab
             if order >= 3:
                 out = out + (1.0 / 12.0) * (self.bracket(a, ab, f) - self.bracket(b, ab, f))
         return out

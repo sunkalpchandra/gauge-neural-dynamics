@@ -28,6 +28,28 @@ OUT = Path(__file__).resolve().parents[1] / "paper" / "generated"
 
 MISSING: list[str] = []
 
+# Which generated files each experiment owns.  When an experiment is refused its
+# tables must be *removed*, not merely left alone: they are tracked in git, so
+# leaving them would typeset the previous run's numbers under a caption claiming
+# to describe the current one, while this script reports the experiment missing.
+OWNED_TABLES = {
+    "exp1_hippocampus": ("table_hippocampus.tex", "table_hippocampus_per_context.tex"),
+    "exp2_grid_cells": ("table_grid.tex", "table_grid_families.tex"),
+    "exp3_motor_cortex": ("table_motor.tex",),
+    "exp4_ablations": ("table_ablations.tex",),
+    "exp5_robustness": ("table_noise.tex",),
+    "exp6_continuous_context": ("table_continuous.tex",),
+}
+
+
+def invalidate(exp: str) -> None:
+    """Delete the tables an unusable experiment owns."""
+    for name in OWNED_TABLES.get(exp, ()):
+        p = OUT / name
+        if p.exists():
+            p.unlink()
+            print(f"  removed stale paper/generated/{name} ({exp} unusable)")
+
 
 # ---------------------------------------------------------------------------
 def load(exp: str) -> dict | None:
@@ -35,11 +57,15 @@ def load(exp: str) -> dict | None:
 
     A checkpoint written mid-run carries ``complete: False`` and has no
     aggregated table yet; we say so rather than crashing, so that a partial
-    build still tells you what is and is not final.
+    build still tells you what is and is not final.  A ``--quick`` pilot is
+    refused for the same reason: its numbers are real but are produced from a
+    single seed and a fraction of the epochs, and nothing downstream could tell
+    them apart from a finished sweep.
     """
     p = RESULTS_DIR / exp / "results.json"
     if not p.exists():
         MISSING.append(f"results for {exp}")
+        invalidate(exp)
         return None
     res = load_json(p)
     if not res.get("complete", True):
@@ -47,9 +73,15 @@ def load(exp: str) -> dict | None:
         # would let half-finished numbers reach the paper, which is precisely
         # what this whole generation path exists to prevent.
         MISSING.append(f"{exp} is incomplete (partial checkpoint); refusing to use it")
+        invalidate(exp)
+        return None
+    if res.get("args", {}).get("quick"):
+        MISSING.append(f"{exp} is a --quick pilot run, not a full sweep; refusing to use it")
+        invalidate(exp)
         return None
     if "table" not in res and "tables" not in res and "summary" not in res:
         MISSING.append(f"{exp} has no aggregated table yet")
+        invalidate(exp)
         return None
     return res
 
@@ -98,9 +130,11 @@ def best_of(table: dict, methods, key: str, higher_is_better: bool) -> tuple[str
 def artefact_realised_abelianness(exp: str) -> str:
     """Realised abelianness from an experiment's saved first-seed artefacts.
 
-    The completed runs predate this metric, so rather than repeat several hours
-    of compute we recompute it from the stored generators and coefficients. It is
-    therefore a single-seed diagnostic and is labelled as such wherever quoted.
+    A fallback only, for runs that predate the metric: rather than repeat several
+    hours of compute we recompute it from the stored generators and coefficients.
+    It is a single-seed diagnostic and is labelled as such wherever quoted.
+    Prefer :func:`realised_abelian` , which uses the per-seed values when the
+    experiment has been re-run since.
     """
     from gnd.geometry.metrics import realised_abelianness
 
@@ -111,6 +145,14 @@ def artefact_realised_abelianness(exp: str) -> str:
         if "GND::generators" not in z.files or "GND::theta" not in z.files:
             return "--"
         return fmt(realised_abelianness(z["GND::generators"], z["GND::theta"]), None)
+
+
+def realised_abelian(table: dict, exp: str, method: str = "GND") -> str:
+    """Realised abelianness over seeds, falling back to the first-seed artefact."""
+    m = val(table, method, "realised_abelianness")
+    if np.isfinite(m):
+        return fmt(m, sem(table, method, "realised_abelianness"))
+    return artefact_realised_abelianness(exp)
 
 
 def write(name: str, body: str) -> None:
@@ -219,7 +261,7 @@ def do_exp1(macros: dict) -> None:
                         sem(t, "ManifoldAlign", "transform_magnitude"), 2),
         "hipGNDmag": fmt(val(t, "GND", "transform_magnitude"),
                          sem(t, "GND", "transform_magnitude"), 2),
-        "hipRealisedAbelian": artefact_realised_abelianness("exp1_hippocampus"),
+        "hipRealisedAbelian": realised_abelian(t, "exp1_hippocampus"),
     })
     # Recovery on the deliberately non-affine morph context, where the linear
     # gauge is expected to fail and the flow gauge to do better.  Quoted
@@ -319,11 +361,88 @@ def do_exp2(macros: dict) -> None:
 
     rot = tabs.get("translation+rotation", {})
     ctrl = tabs.get("all", {})
+
+    # A seed counts as a failed fit when its final *training* loss exceeds
+    # LOSS_TOL times the median across seeds for the same method.  The criterion
+    # reads the training objective only, never the evaluation metrics being
+    # compared, so it cannot be tuned to produce a favourable comparison.  On
+    # this sweep every seed lies within 1.06x of its own median except one, at
+    # 1.63x, so the threshold sits in an empty gap rather than on a boundary.
+    LOSS_TOL = 1.25
+
+    def _tr(method: str) -> list[dict]:
+        return sorted([r for r in res["rows"]
+                       if r.get("context_set") == "translation"
+                       and r.get("method") == method and "error" not in r],
+                      key=lambda r: r["seed"])
+
+    def _split(method: str) -> tuple[list[int], list[int], float]:
+        rows = _tr(method)
+        loss = np.array([r.get("final_loss", np.nan) for r in rows], float)
+        if not rows or not np.isfinite(loss).all():
+            return [r["seed"] for r in rows], [], float("nan")
+        med = np.median(loss)
+        ok = [r["seed"] for r, l in zip(rows, loss) if l <= LOSS_TOL * med]
+        bad = [r["seed"] for r, l in zip(rows, loss) if l > LOSS_TOL * med]
+        worst = float(loss.max() / med) if med > 0 else float("nan")
+        return ok, bad, worst
+
+    gnd_ok, gnd_bad, gnd_worst = _split("GND")
+    gl_ok, _, _ = _split("GND-gl")
+    both = sorted(set(gnd_ok) & set(gl_ok))
+
+    def _over(method: str, seeds: list[int], key: str) -> str:
+        v = np.array([r.get(key, np.nan) for r in _tr(method) if r["seed"] in seeds], float)
+        v = v[np.isfinite(v)]
+        if v.size == 0:
+            return "--"
+        return fmt(float(v.mean()),
+                   float(v.std(ddof=1) / np.sqrt(v.size)) if v.size > 1 else None)
+
+    n_tr = len(_tr("GND"))
+    macros.update({
+        "gridLossTol": f"{LOSS_TOL:g}",
+        "gridConvergedSeeds": f"{len(both)} of {n_tr}" if n_tr else "--",
+        "gridFailedSeeds": f"{len(gnd_bad)} of {n_tr}" if n_tr else "--",
+        "gridLossRatio": (f"{gnd_worst:.1f}" if np.isfinite(gnd_worst) else "--"),
+        "gridGNDgreConv": _over("GND", both, "gre"),
+        "gridGLgreConv": _over("GND-gl", both, "gre"),
+        "gridGNDtransportConv": _over("GND", both, "transport_r2"),
+        "gridGLtransportConv": _over("GND-gl", both, "transport_r2"),
+    })
+
+    # The flow gauge is bimodal on the non-abelian family -- it beats the linear
+    # gauge on some seeds and diverges on others -- so the mean alone misdescribes
+    # it.  Count the seeds instead, paired within seed.
+    def _rot(method: str) -> list[dict]:
+        return sorted([r for r in res["rows"]
+                       if r.get("context_set") == "translation+rotation"
+                       and r.get("method") == method and "error" not in r],
+                      key=lambda r: r["seed"])
+
+    paired = [(a.get("gre"), b.get("gre")) for a, b in zip(_rot("GND"), _rot("GND-flow"))]
+    paired = [(a, b) for a, b in paired
+              if isinstance(a, (int, float)) and isinstance(b, (int, float))]
+    flow_better = sum(1 for a, b in paired if b < a)
+
+    macros.update({
+        "gridRotGcs": fmt(val(rot, "GND", "gcs"), sem(rot, "GND", "gcs")),
+        "gridRotTransport": fmt(val(rot, "GND", "transport_r2"),
+                                sem(rot, "GND", "transport_r2")),
+        # No artefact fallback here: the saved archive is the *translation*
+        # family's, so falling back to it would quote the abelian family's number
+        # under a non-abelian label.
+        "gridRotRealisedAbelian": fmt(val(rot, "GND", "realised_abelianness"),
+                                      sem(rot, "GND", "realised_abelianness")),
+        "gridRotFlowTransport": fmt(val(rot, "GND-flow", "transport_r2"),
+                                    sem(rot, "GND-flow", "transport_r2")),
+        "gridRotFlowBetterSeeds": (f"{flow_better} of {len(paired)}" if paired else "--"),
+    })
     macros.update({
         "gridSeeds": str(n_seeds),
         "gridGNDgcs": fmt(val(main, "GND", "gcs"), sem(main, "GND", "gcs")),
         "gridGNDabelian": fmt(val(main, "GND", "abelianness"), sem(main, "GND", "abelianness")),
-        "gridRealisedAbelian": artefact_realised_abelianness("exp2_grid_cells"),
+        "gridRealisedAbelian": realised_abelian(main, "exp2_grid_cells"),
         "gridGLgcs": fmt(val(main, "GND-gl", "gcs"), sem(main, "GND-gl", "gcs")),
         "gridPCAgre": fmt(val(main, "PCA", "gre"), sem(main, "PCA", "gre")),
         "gridPCAgcs": fmt(val(main, "PCA", "gcs"), sem(main, "PCA", "gcs")),
@@ -618,7 +737,8 @@ def do_exp6(macros: dict) -> None:
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--strict", action="store_true",
-                    help="exit non-zero if any experiment or macro is missing")
+                    help="also exit non-zero if any macro has no value "
+                         "(a missing experiment always exits non-zero)")
     args = ap.parse_args(argv)
 
     macros: dict[str, str] = {}
@@ -641,8 +761,12 @@ def main(argv=None) -> int:
     if bad:
         print(f"WARNING: {len(bad)} macro(s) have no value: {', '.join(bad)}")
     if MISSING:
+        # A missing experiment is the loud failure this generation path exists
+        # to produce; exiting 0 here would let it pass unnoticed through
+        # run_all.py and CI.
         print("MISSING: " + "; ".join(MISSING))
-    if args.strict and (bad or MISSING):
+        return 1
+    if args.strict and bad:
         return 1
     return 0
 

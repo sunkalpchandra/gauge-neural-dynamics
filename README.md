@@ -47,6 +47,10 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 .venv/bin/python scripts/run_all.py --quick
 ```
 
+`--quick` writes to `results/quick/` and `figures/quick/`, never to the tracked
+results and figures the paper is built from, so a smoke test cannot be mistaken
+for -- or overwrite -- a real sweep.
+
 Full reproduction (five seeds; a few hours on eight CPU cores):
 
 ```bash
@@ -155,9 +159,15 @@ code path used for GND. All values are reported on held-out samples.
 - **No number in the paper is typed by hand.** `scripts/make_tables.py` reads
   `results/*/results.json` and writes both the tables and a `numbers.tex` of LaTeX
   macros; `main.tex` contains no literal results. A missing experiment therefore
-  produces a loud failure at build time rather than a stale number in the PDF.
+  produces a loud failure at build time rather than a stale number in the PDF:
+  `make_tables.py` exits non-zero and *deletes* the tables that experiment owns,
+  rather than leaving the previous run's numbers to be typeset under a caption
+  describing a run that no longer exists.
+- A partial checkpoint or a `--quick` pilot is refused by both the table
+  generator and the figure scripts, so a smoke run cannot be mistaken for a
+  finished sweep.
 - `scripts/build_paper.sh` exits non-zero on any LaTeX error, undefined citation or
-  reference, or remaining placeholder.
+  reference, bibtex failure, remaining placeholder, or a body over the page limit.
 
 ---
 
@@ -169,14 +179,14 @@ code path used for GND. All values are reported on held-out samples.
 bash scripts/build_paper.sh                 # -> paper/main.pdf
 ```
 
-You need a LaTeX installation. On macOS without admin rights, TinyTeX works and
-needs no `sudo`:
+You need a LaTeX installation. TinyTeX works on macOS and Linux and needs no
+`sudo`; its installer symlinks the binaries into `~/.local/bin`, which
+`build_paper.sh` finds on its own:
 
 ```bash
 curl -sL "https://yihui.org/tinytex/install-bin-unix.sh" | sh
-export PATH="$HOME/Library/TinyTeX/bin/universal-darwin:$PATH"
 tlmgr install natbib geometry xcolor hyperref booktabs amsfonts caption \
-              microtype times psnfss units rsfs multirow
+              microtype times psnfss units rsfs multirow placeins
 ```
 
 `paper/neurips_workshop.sty` is an independent reimplementation of the published
@@ -199,8 +209,11 @@ that the gauge is exactly invertible and exactly the identity at the reference
 context; that the flow gauge reduces to the linear gauge when its non-linearity is
 switched off; that structure constants and the closure defect are correct on
 algebras with known answers (`so(3)`, and a commuting pair); that BCH composition
-is exact for a genuinely abelian family; that persistent homology returns the right
-Betti numbers for a circle, a torus and a disc; and that each metric responds in the
+is exact for a genuinely abelian family and second-order accurate on a
+*non-antisymmetric* one, which is the only configuration in which a sign error in
+the bracket is visible; that the fitted rotation frequency of a planted
+oscillation comes back in hertz; that persistent homology returns the right Betti
+numbers for a circle, a torus and a disc; and that each metric responds in the
 right direction to a controlled perturbation.
 
 ---

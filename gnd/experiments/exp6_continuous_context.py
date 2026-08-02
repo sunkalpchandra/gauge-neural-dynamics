@@ -226,9 +226,12 @@ def main(argv=None) -> dict:
                 )
         else:
             summary[part.replace(":", "_")] = aggregate_seeds([r for r in rows if r["part"] == part])
-    save_json({"rows": rows, "summary": summary, "args": vars(args)}, out / "results.json")
+    save_json({"rows": rows, "summary": summary, "args": vars(args), "complete": True},
+              out / "results.json")
     if arts:
-        np.savez_compressed(out / "artifacts.npz", **arts)
+        # Stamped with the seed, so the archive cannot outlive the run silently.
+        np.savez_compressed(out / "artifacts.npz",
+                            provenance_seed=np.array(args.seeds[0]), **arts)
     print(f"\nwrote {out/'results.json'}")
     return {"rows": rows, "summary": summary}
 

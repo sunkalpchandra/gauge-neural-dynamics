@@ -126,7 +126,8 @@ def main(argv=None) -> dict:
             agg = aggregate_seeds(sub)
             table[name] = {k: agg[k] for k in HEADLINE_KEYS if k in agg}
             table[name]["_n_seeds"] = len(sub)
-    save_json({"rows": rows, "table": table, "args": vars(args)}, out / "results.json")
+    save_json({"rows": rows, "table": table, "args": vars(args), "complete": True},
+              out / "results.json")
     print(f"\nwrote {out/'results.json'}")
     return {"rows": rows, "table": table}
 

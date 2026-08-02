@@ -32,8 +32,15 @@ OWNER = {
 def main() -> int:
     numbers = PAPER / "generated" / "numbers.tex"
     defined: set[str] = set()
+    valueless: set[str] = set()
     if numbers.exists():
-        defined = set(re.findall(r"\\newcommand\{\\(\w+)\}", numbers.read_text()))
+        text = numbers.read_text()
+        defined = set(re.findall(r"\\newcommand\{\\(\w+)\}", text))
+        # make_tables.py emits "--" for a metric its results file has no value
+        # for.  Defined-but-empty is not defined for our purposes: it would
+        # typeset a literal dash in the middle of a sentence.
+        valueless = {n for n, v in re.findall(r"\\newcommand\{\\(\w+)\}\{(.*)\}", text)
+                     if v.strip() in ("", "--")}
 
     used: set[str] = set()
     for f in ("main.tex", "appendix.tex"):
@@ -43,7 +50,7 @@ def main() -> int:
 
     # only consider names that look like ours, i.e. carry a known prefix
     ours = {m for m in used if any(re.match(rf"^{k}[A-Z]", m) for k in OWNER)}
-    missing = sorted(ours - defined)
+    missing = sorted((ours - defined) | (ours & valueless))
 
     if not missing:
         print(f"macros: {len(ours)} cited, all defined")
@@ -54,7 +61,7 @@ def main() -> int:
         key = next(k for k in OWNER if re.match(rf"^{k}[A-Z]", m))
         by_exp.setdefault(OWNER[key], []).append(m)
 
-    print(f"FAIL: {len(missing)} macro(s) cited but not defined:")
+    print(f"FAIL: {len(missing)} macro(s) cited but not defined (or defined empty):")
     for exp, names in sorted(by_exp.items()):
         print(f"    {exp}: {', '.join(names)}")
     print("  -> re-run those experiments, then scripts/make_tables.py")

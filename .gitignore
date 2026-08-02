@@ -24,3 +24,8 @@ paper/figures/
 # are what lets a new contributor regenerate every figure without repeating the
 # multi-hour sweep. Only the run logs are excluded, being regenerable.
 results/logs/*.log
+
+# Smoke runs (run_all.py --quick) write here so that they cannot overwrite the
+# results and figures the paper is built from.
+results/quick/
+figures/quick/
