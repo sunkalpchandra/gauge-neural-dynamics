@@ -33,10 +33,16 @@ jobs:
       - name: End-to-end tests
         run: pytest tests/ -q -m slow --durations=5
 
+      # --quick writes to results/quick, never to the tracked results the paper
+      # is built from, so this cannot mask a stale sweep.
       - name: Pipeline smoke test
         run: python scripts/run_all.py --quick --stage experiments --jobs 2
 
+      # No "|| true" here: a figure that cannot be drawn, a table that cannot be
+      # generated, or a macro the paper cites but no experiment defines are all
+      # states that must fail the build rather than pass quietly.
       - name: Figures and tables build
         run: |
-          python -m gnd.figures.make_all || true
+          python -m gnd.figures.make_all
           python scripts/make_tables.py
+          python scripts/check_macros.py

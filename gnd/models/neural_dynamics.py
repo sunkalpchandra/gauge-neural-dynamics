@@ -102,12 +102,20 @@ class LatentDynamics(nn.Module):
         return jvp
 
 
-def dynamics_spectrum(A: np.ndarray, dt: float = 1.0) -> dict:
+def dynamics_spectrum(A: np.ndarray) -> dict:
     """Continuous-time eigen-summary of a linear latent flow.
 
-    Returns decay rates, rotation frequencies (Hz if ``dt`` is in seconds) and
-    the raw eigenvalues.  These are the conjugation-invariant quantities that
-    (5) predicts to be shared across contexts.
+    ``A`` is the *continuous-time* generator returned by
+    :func:`fit_linear_dynamics`, whose eigenvalues are already in rad per unit
+    time, so the sampling interval must not enter again here: dividing by ``dt``
+    a second time inflated every frequency by ``1/dt`` (a factor of 100 at the
+    10 ms step used for the motor simulation).  Ratios such as the
+    coefficient of variation were unaffected, absolute frequencies were not.
+
+    Returns decay rates, rotation frequencies (Hz if the ``dt`` given to
+    :func:`fit_linear_dynamics` was in seconds) and the raw eigenvalues.  These
+    are the conjugation-invariant quantities that (5) predicts to be shared
+    across contexts.
     """
     ev = np.linalg.eigvals(np.asarray(A, float))
     order = np.argsort(-np.abs(ev.imag))
@@ -115,8 +123,8 @@ def dynamics_spectrum(A: np.ndarray, dt: float = 1.0) -> dict:
     return {
         "eigenvalues": ev,
         "rates": ev.real,
-        "frequencies_hz": ev.imag / (2 * np.pi * dt),
-        "top_frequency_hz": float(np.abs(ev.imag).max() / (2 * np.pi * dt)),
+        "frequencies_hz": ev.imag / (2 * np.pi),
+        "top_frequency_hz": float(np.abs(ev.imag).max() / (2 * np.pi)),
     }
 
 

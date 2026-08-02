@@ -199,6 +199,70 @@ def test_flow_with_so_algebra_preserves_norm():
     assert torch.allclose(out.norm(dim=1), z.norm(dim=1), atol=1e-3)
 
 
+def _sl2_flow(n_steps: int = 80) -> FlowGaugeField:
+    """A flow gauge whose fields are an sl(2) triple embedded in ``R^4``.
+
+    Deliberately *not* antisymmetric.  On an antisymmetric algebra a sign error
+    in the bracket and a transposed Jacobian cancel each other exactly, so a
+    test built only from ``so(n)`` -- as the rest of this file is -- cannot see
+    either of them.
+    """
+    d, K = 4, 3
+    E = torch.zeros(K, d, d, dtype=torch.float64)
+    E[0, 0, 1] = 1.0                        # e
+    E[1, 1, 0] = 1.0                        # f
+    E[2, 0, 0], E[2, 1, 1] = 1.0, -1.0      # h
+    flow = FlowGaugeField(n_latent=d, n_context_features=2, n_generators=K,
+                          nonlinearity=0.0, n_steps=n_steps, algebra="gl").double()
+    with torch.no_grad():
+        flow.linear.copy_(E)
+        flow.shift.zero_()
+    return flow
+
+
+def test_flow_jacobian_action_is_the_jacobian_not_its_transpose():
+    """``D V_k(z) w``, not ``D V_k(z)^T w``.
+
+    A single reverse-mode ``grad`` with ``grad_outputs=w`` computes the
+    transpose, which is a different vector for any non-symmetric generator and
+    silently gives the bracket the wrong sign.
+    """
+    torch.manual_seed(9)
+    flow = _sl2_flow()
+    z = torch.randn(16, 4, dtype=torch.float64)
+    w = torch.randn(16, 4, dtype=torch.float64)
+    A = flow.linear_part()[0]
+    assert torch.allclose(flow._jacobian_action(z, 0, w), w @ A.T, atol=1e-10)
+    assert not torch.allclose(flow._jacobian_action(z, 0, w), w @ A, atol=1e-3)
+
+
+def test_flow_composition_is_second_order_accurate_on_a_non_abelian_algebra():
+    """``compose(a, b)`` must reproduce ``T_a . T_b`` to second order.
+
+    The check is the convergence rate, not a single tolerance: a truncation at
+    order 2 leaves an error that falls as ``theta^2`` once normalised by the
+    size of the transformation, whereas dropping the bracket -- or getting its
+    sign wrong -- leaves an error falling only as ``theta``.
+    """
+    torch.manual_seed(10)
+    flow = _sl2_flow()
+    errs = {}
+    for scale in (0.1, 0.05):
+        a = torch.tensor([0.9, -0.4, 0.5], dtype=torch.float64) * scale
+        b = torch.tensor([-0.3, 0.8, 0.6], dtype=torch.float64) * scale
+        z = torch.randn(64, 4, dtype=torch.float64)
+        with torch.no_grad():
+            exact = flow.transform(flow.transform(z, b), a)
+            den = (exact - z).norm(dim=-1).mean()
+            bch = flow.transform(z, flow.compose(a, b, z, refresh=True))
+            errs[scale] = {
+                "bch": float((exact - bch).norm(dim=-1).mean() / den),
+                "first": float((exact - flow.transform(z, a + b)).norm(dim=-1).mean() / den),
+            }
+    assert errs[0.1]["bch"] < 0.25 * errs[0.1]["first"]
+    assert errs[0.05]["bch"] < 0.4 * errs[0.1]["bch"]     # ~theta^2, so ~4x smaller
+
+
 def test_realised_abelianness_sees_what_the_basis_measure_misses():
     """A non-commuting basis can still realise a commuting group.
 

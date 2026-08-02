@@ -169,3 +169,24 @@ def test_mps_cross_context_detects_misalignment():
     a = manifold_preservation_score(same, maxdim=1, n_points=250)["mps_cross_context"]
     b = manifold_preservation_score(mixed, maxdim=1, n_points=250)["mps_cross_context"]
     assert a > b
+
+
+# ---------------------------------------------------------------------------
+# latent dynamics: units
+# ---------------------------------------------------------------------------
+def test_rotation_frequency_is_in_hertz():
+    """A planted rotation must come back at its own frequency.
+
+    ``fit_linear_dynamics`` already divides by the sampling interval, so its
+    eigenvalues are in radians per second; dividing by ``dt`` a second time in
+    the spectrum would scale every frequency by ``1/dt`` -- a factor of 100 at
+    the 10 ms step the motor simulation uses.
+    """
+    from gnd.models.neural_dynamics import dynamics_spectrum, fit_linear_dynamics
+
+    dt, f_hz = 0.01, 2.0
+    t = np.arange(0, 4.0, dt)
+    w = 2 * np.pi * f_hz
+    Z = np.stack([np.cos(w * t), np.sin(w * t)], axis=1)
+    A = fit_linear_dynamics(Z, dt=dt)
+    assert abs(dynamics_spectrum(A)["top_frequency_hz"] - f_hz) < 0.05 * f_hz

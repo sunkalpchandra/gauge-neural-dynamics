@@ -14,8 +14,10 @@ import torch
 import yaml
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-RESULTS_DIR = REPO_ROOT / "results"
-FIGURE_DIR = REPO_ROOT / "figures"
+# A smoke run must not be able to overwrite the results the paper is built from,
+# so ``--quick`` redirects every stage to a scratch root through this variable.
+RESULTS_DIR = Path(os.environ.get("GND_RESULTS_DIR", REPO_ROOT / "results"))
+FIGURE_DIR = Path(os.environ.get("GND_FIGURE_DIR", REPO_ROOT / "figures"))
 CONFIG_DIR = REPO_ROOT / "configs"
 
 

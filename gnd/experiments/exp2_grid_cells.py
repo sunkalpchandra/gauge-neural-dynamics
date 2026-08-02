@@ -168,6 +168,11 @@ def main(argv=None) -> dict:
             rows += r
             if ctx_kind == args.main_context_set and not first_art:
                 first_art = art
+                # Written here rather than after the whole sweep: the two
+                # supplementary families take hours and Figure 4 depends only on
+                # the main family's first seed, so an interrupted run should
+                # still leave the figure reproducible.
+                _save_artifacts(Path(args.out), first_art, seed, ctx_kind)
             checkpoint(Path(args.out), {
                 "rows": all_rows + rows,
                 "tables": {**tables, ctx_kind: aggregate_table(rows, HEADLINE_KEYS)},
@@ -177,16 +182,24 @@ def main(argv=None) -> dict:
 
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
-    save_json({"rows": all_rows, "tables": tables, "args": vars(args)}, out / "results.json")
-    if first_art:
-        _save_artifacts(out, first_art)
+    save_json({"rows": all_rows, "tables": tables, "args": vars(args), "complete": True},
+              out / "results.json")
     print(f"\nwrote {out/'results.json'}")
     return {"rows": all_rows, "tables": tables}
 
 
-def _save_artifacts(out: Path, art: dict) -> None:
+def _save_artifacts(out: Path, art: dict, seed: int, context_set: str) -> None:
+    """Save the arrays Figure 4 draws from, stamped with where they came from.
+
+    Without the stamp an archive is indistinguishable from any other run's, and
+    a figure can end up drawn from one sweep while the tables beside it come
+    from another.
+    """
+    out.mkdir(parents=True, exist_ok=True)
     ds, test = art["dataset"], art["test"]
     payload = {
+        "provenance_seed": np.array(seed),
+        "provenance_context_set": np.array(context_set),
         "phase_test": test.latent,
         "torus_test": torus_embedding(test.latent),
         "context_names": np.array([s.name for s in test.contexts]),
